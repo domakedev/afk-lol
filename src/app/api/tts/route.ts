@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const { text } = await req.json();
   const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-  const ELEVENLABS_VOICE_ID = "jBpfuIE2acCO8z3wKNLl";
+  const ELEVENLABS_VOICE_ID = "J3JSkWXJwqClE1dIxQM9";
 
   try {
     const response = await fetch(
