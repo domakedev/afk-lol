@@ -135,22 +135,35 @@ const ReinforcementOverlay: React.FC<{
       await new Promise((res) => setTimeout(res, 500));
       if (isCancelled) return;
 
-      const text1 = `¡Llevas ${daysAfk} días AFK!`;
+      // Mensaje de días AFK
+      let text1 = "";
+      if (daysAfk > 0) {
+        text1 = `¡Llevas ${daysAfk} día${daysAfk > 1 ? "s" : ""} AFK!`;
+      } else {
+        text1 = "¡Hoy es el primer día de tu nueva etapa!";
+      }
       setMessage(text1);
       await speak(text1);
       if (isCancelled) return;
       await new Promise((res) => setTimeout(res, 500));
       if (isCancelled) return;
 
+      // Mensaje de horas recuperadas
       const hours = Math.floor(userData.horasRecuperadas / 60);
       const minutes = userData.horasRecuperadas % 60;
-      const text2 = `¡Has recuperado ${hours} horas y ${minutes} minutos!`;
+      let text2 = "";
+      if (userData.horasRecuperadas > 0) {
+        text2 = `¡Has recuperado ${hours} horas y ${minutes} minutos!`;
+      } else {
+        text2 = "¡Cada pequeño paso cuenta! Sigue avanzando.";
+      }
       setMessage(text2.toUpperCase());
       await speak(text2);
       if (isCancelled) return;
       await new Promise((res) => setTimeout(res, 500));
       if (isCancelled) return;
 
+      // Compromiso
       const text3 = userData.commitment;
       setMessage(`Recuerda tu compromiso: "${text3}"`);
       await speak(`Recuerda tu compromiso: ${text3}`);
@@ -607,7 +620,7 @@ const Dashboard: React.FC<{
         onClick={() => setShowReinforcement(true)}
         className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2"
       >
-        {ICONS.shield} <span className="ml-2">Botón de Refuerzo</span>
+        {ICONS.shield} <span className="ml-2">Necesito motivación (¡ayúdame a no recaer!)</span>
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">

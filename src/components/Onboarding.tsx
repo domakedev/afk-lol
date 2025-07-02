@@ -222,6 +222,40 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
               min="1"
               className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
             />
+            <div className="mt-8 flex flex-col items-start">
+              <a
+                href="https://lolvalue.com/wasted-time-lol"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block w-fit px-4 max-w-xs bg-yellow-400/90 hover:bg-yellow-300 text-slate-900 font-semibold text-sm rounded-lg shadow p-2 border border-amber-300 mb-1 transition-all duration-700 ease-out"
+              >
+                <div className="flex flex-row items-center gap-2 justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 text-amber-600 group-hover:text-yellow-500 transition-colors duration-700 ease-out"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.59 14.37a5.25 5.25 0 11-7.43-7.43 5.25 5.25 0 017.43 7.43z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 19.5L15 15"
+                    />
+                  </svg>
+                  <span className="text-center">Consulta tu tiempo exacto</span>
+                </div>
+              </a>
+              <span className="text-xs text-slate-400 mt-1 ml-1">
+                Se abrirá una página externa: lolvalue.com
+              </span>
+            </div>
           </div>
         );
       default:
@@ -240,7 +274,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4" id="onboarding">
+    <div
+      className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4"
+      id="onboarding"
+    >
       <div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 md:p-8 shadow-2xl border border-slate-700">
         <div className="min-h-[400px] flex flex-col justify-center">
           {renderStep()}
