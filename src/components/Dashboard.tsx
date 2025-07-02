@@ -451,7 +451,32 @@ const Dashboard: React.FC<{
       </div>
 
       <div className="text-center text-amber-300 text-sm font-semibold -mt-2 mb-4">
-        Próximo gran hito: ¡VICTORIA en la 5ª tarea de tu racha!
+        {(() => {
+          const nextMilestones = [
+            { n: 1, label: "Primera Sangre" },
+            { n: 2, label: "Doble kill" },
+            { n: 3, label: "Triple-kill" },
+            { n: 4, label: "Quadra-kill" },
+            { n: 5, label: "Penta-kill (¡Victoria!)" },
+            { n: 6, label: "Imparable" },
+            { n: 7, label: "Racha de Dios" },
+            { n: 8, label: "Legendario" },
+          ];
+          const current = userData.killStreak;
+          const next = nextMilestones.find((m) => m.n > current);
+          if (next) {
+            const tareasRestantes = next.n - current;
+            return `Obtendrás el logro de ${
+              next.label
+            } al completar ${tareasRestantes} tarea${
+              tareasRestantes > 1 ? "s" : ""
+            } más${next.n === 5 ? " (¡Victoria!)" : ""}.`;
+          } else {
+            return `¡Sigue sumando racha! Próximo hito: ${
+              current + 1
+            } tareas seguidas.`;
+          }
+        })()}
       </div>
 
       <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 shadow-2xl border border-slate-700">
