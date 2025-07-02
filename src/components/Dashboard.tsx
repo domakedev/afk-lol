@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { UserData, ActivityEntry, DefeatEntry } from "../types";
 import { ICONS } from "../constants";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -222,6 +224,7 @@ const Dashboard: React.FC<{
   const [showReinforcement, setShowReinforcement] = useState(false);
   const [showVictoryFlash, setShowVictoryFlash] = useState(false);
   const [showVictoryText, setShowVictoryText] = useState(false);
+  const { width, height } = useWindowSize();
 
   const [actionTab, setActionTab] = useState<"victory" | "defeat">("victory");
   const [lostHours, setLostHours] = useState("");
@@ -270,13 +273,27 @@ const Dashboard: React.FC<{
 
       setVisualEffect(nivel);
 
-      const speakOptions = options || { pitch: 1.2, rate: 1.3 };
-      const speakPromise = speak(textoVoz, speakOptions);
+      if (nivel === "penta-kill") {
+        // Reproducir sonido de fondo muy bajito
+        const bgAudio = new Audio("/celebration/celebration.mp3");
+        bgAudio.volume = 0.1; // volumen muy bajo
+        bgAudio.play().catch(() => {});
+        // Mostrar confeti
+        setShowVictoryFlash(true);
+        // TTS
+        await Promise.all([
+          speak(textoVoz, options || { pitch: 1.5, rate: 1.5 }),
+          new Promise((res) => setTimeout(res, 3200)), // tiempo para ver el confeti
+        ]);
+        setShowVictoryFlash(false);
+        setVisualEffect(null);
+        resolve();
+        return;
+      }
 
       await new Promise((res) => setTimeout(res, 1500));
-
       setVisualEffect(null);
-      await speakPromise;
+      await speak(textoVoz, options || { pitch: 1.2, rate: 1.3 });
       resolve();
     });
   };
@@ -411,6 +428,15 @@ const Dashboard: React.FC<{
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
+      {/* Confetti para pentakill */}
+      {visualEffect === "penta-kill" && showVictoryFlash && (
+        <Confetti
+          width={width}
+          height={height}
+          numberOfPieces={400}
+          recycle={false}
+        />
+      )}
       {visualEffect && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
@@ -447,7 +473,8 @@ const Dashboard: React.FC<{
       )}
 
       <h1 className="text-3xl font-bold text-slate-100 text-center">
-        ¡Hola, {userData.userName}! Cada día lejos de LoL es una victoria para ti.
+        ¡Hola, {userData.userName}! Cada día lejos de LoL es una victoria para
+        ti.
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -568,7 +595,8 @@ const Dashboard: React.FC<{
               Registrar Derrota
             </h2>
             <p className="text-sm text-center text-slate-400 -mt-1 mb-3">
-              Una recaída no borra tu progreso. Aprende, levántate y sigue adelante. ¡Tú puedes!
+              Una recaída no borra tu progreso. Aprende, levántate y sigue
+              adelante. ¡Tú puedes!
             </p>
             <select
               value={gameMode}
@@ -619,7 +647,10 @@ const Dashboard: React.FC<{
         onClick={() => setShowReinforcement(true)}
         className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2"
       >
-        {ICONS.shield} <span className="ml-2">Necesito motivación (¡ayúdame a no recaer!)</span>
+        {ICONS.shield}{" "}
+        <span className="ml-2">
+          Necesito motivación (¡ayúdame a no recaer!)
+        </span>
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
