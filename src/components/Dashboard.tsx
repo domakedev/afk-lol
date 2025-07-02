@@ -455,7 +455,7 @@ const Dashboard: React.FC<{
         </div>
       )}
       {showVictoryFlash && (
-        <div className="fixed inset-0 pointer-events-none z-50 animate-victory-flash"></div>
+        <div className="fixed inset-0 pointer-events-none z-50 animate-victory-flash" style={{ width: "100vw", height: "100vh" }}></div>
       )}
       {showVictoryText && (
         <div className="victory-text-overlay">
