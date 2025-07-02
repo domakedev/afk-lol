@@ -30,6 +30,11 @@ const App: React.FC = () => {
   });
 
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   // Forzar dashboard al terminar onboarding
   useEffect(() => {
@@ -37,10 +42,6 @@ const App: React.FC = () => {
       setActiveTab("dashboard");
     }
   }, [userData.onboardingComplete]);
-
-  if (!userData.onboardingComplete) {
-    return <Onboarding setUserData={setUserData} />;
-  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -79,7 +80,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col">
-      <main className="flex-grow pt-6 pb-20">{renderContent()}</main>
+      <main className="flex-grow pt-6 pb-20">
+        {loading ? null :
+          !userData.onboardingComplete ? (
+            <Onboarding setUserData={setUserData} />
+          ) : (
+            renderContent()
+          )}
+      </main>
       <footer className="fixed bottom-0 left-0 right-0 bg-slate-800/80 backdrop-blur-sm border-t border-slate-700 shadow-lg z-10">
         <nav
           className="flex justify-around max-w-3xl mx-auto"

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo, useEffect } from "react";
 import { UserData, ActivityEntry, DefeatEntry } from "../types";
 import { ICONS } from "../constants";
@@ -395,7 +397,7 @@ const Dashboard: React.FC<{
   };
 
   return (
-    <div className="p-4 space-y-6 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
       {visualEffect && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
@@ -466,9 +468,7 @@ const Dashboard: React.FC<{
           const next = nextMilestones.find((m) => m.n > current);
           if (next) {
             const tareasRestantes = next.n - current;
-            return `Obtendrás el logro de ${
-              next.label
-            } al completar ${tareasRestantes} tarea${
+            return `Obtendrás el logro de ${next.label.toUpperCase()} al completar ${tareasRestantes} tarea${
               tareasRestantes > 1 ? "s" : ""
             } más${next.n === 5 ? " (¡Victoria!)" : ""}.`;
           } else {

@@ -240,7 +240,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4" id="onboarding">
       <div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 md:p-8 shadow-2xl border border-slate-700">
         <div className="min-h-[400px] flex flex-col justify-center">
           {renderStep()}
