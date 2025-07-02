@@ -68,8 +68,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
               Bienvenido/a a LOL AFK
             </h1>
             <p className="text-lg text-slate-300 mb-8">
-              Estás dando el primer paso para recuperar tu vida. Estamos aquí
-              para apoyarte en cada momento de este viaje.
+              Hoy inicias un camino de cambio real. No estás solo/a: cada paso, por
+              pequeño que sea, es una victoria. ¡Vamos juntos!
             </p>
             <button
               onClick={handleNext}
@@ -86,13 +86,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
               Primero, ¿cómo te gustaría que te llamemos?
             </h2>
             <p className="text-slate-400 mb-6">
-              Puede ser tu nombre real o un apodo.
+              Puede ser tu nombre real, un apodo o algo que te inspire.
             </p>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Escribe tu nombre o apodo"
+              placeholder="Escribe tu nombre o apodo preferido"
               className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
             />
           </div>
@@ -149,17 +149,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
         return (
           <div>
             <h2 className="text-2xl font-semibold mb-2 text-slate-100">
-              Declaración de Compromiso
+              ¿Cuál es tu mayor motivación para dejar LoL?
             </h2>
             <p className="text-slate-400 mb-6">
-              ¿Por qué quieres hacer esto? Escribir tus razones personales
-              refuerza tu motivación. Vuelve a leer esto cuando necesites
-              fuerza.
+              Escribe tus razones personales. Volver a leerlas te dará fuerza en
+              los momentos difíciles. Sé honesto/a contigo mismo/a.
             </p>
             <textarea
               value={commitment}
               onChange={(e) => setCommitment(e.target.value)}
-              placeholder="Ej: 'Quiero dejar de jugar para mejorar mis notas, pasar más tiempo con mi familia y sentirme más sano y con más energía...'"
+              placeholder="Ej: 'Quiero recuperar mi tiempo, mejorar mi salud mental y disfrutar más de mi vida real.'"
               rows={8}
               className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
             />
@@ -208,11 +207,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
         return (
           <div>
             <h2 className="text-2xl font-semibold mb-2 text-slate-100">
-              Establece tu Meta de Recuperación
+              ¿Cuánto tiempo perdido quieres recuperar?
             </h2>
             <p className="text-slate-400 mb-6">
-              ¿Cuántas horas estimas que has perdido en el juego? Sé honesto
-              contigo mismo. Este será tu objetivo principal a recuperar.
+              Estima las horas que dedicaste al juego. Este será tu objetivo de
+              recuperación. Recuerda: cada minuto que recuperes es un logro.
             </p>
             <input
               type="number"

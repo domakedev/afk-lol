@@ -447,7 +447,7 @@ const Dashboard: React.FC<{
       )}
 
       <h1 className="text-3xl font-bold text-slate-100 text-center">
-        Hola, {userData.userName}
+        ¡Hola, {userData.userName}! Cada día lejos de LoL es una victoria para ti.
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -568,8 +568,7 @@ const Dashboard: React.FC<{
               Registrar Derrota
             </h2>
             <p className="text-sm text-center text-slate-400 -mt-1 mb-3">
-              Una recaída reinicia tu racha y aumenta tus &quot;Horas por
-              Recuperar&quot;.
+              Una recaída no borra tu progreso. Aprende, levántate y sigue adelante. ¡Tú puedes!
             </p>
             <select
               value={gameMode}
