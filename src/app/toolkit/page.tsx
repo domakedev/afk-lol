@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import { UserData, TriggerEntry, CbtEntry } from "@/types";
 import { ICONS } from "@/constants";
@@ -90,7 +91,7 @@ const Toolkit: React.FC<ToolkitProps> = ({ userData, setUserData }) => {
         breathingStep % 2 === 0 ? 4000 : 7000
       ); // 4s inhale, 7s exhale
       return () => clearTimeout(timer);
-    }, [breathingStep, showSOS]);
+    }, [breathingStep]);
 
     const breathText = [
       "Inhala (4s)",

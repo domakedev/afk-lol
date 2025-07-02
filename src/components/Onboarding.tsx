@@ -1,31 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { UserData } from "@/types";
 import { ASSESSMENT_QUESTIONS, ICONS } from "@/constants";
-import { useRouter, usePathname } from "next/navigation";
 
-const OnboardingPage = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [userData, setUserData] = useLocalStorage<UserData>("lol-afk-data", {
-    onboardingComplete: false,
-    userName: "",
-    assessmentScore: 0,
-    commitment: "",
-    dayZero: null,
-    horasRecuperadas: 0,
-    horasPorRecuperar: 0,
-    killStreak: 0,
-    activities: [],
-    goals: [],
-    routines: [],
-    triggers: [],
-    cbtEntries: [],
-    defeats: [],
-  });
+interface OnboardingProps {
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+}
 
+const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [answers, setAnswers] = useState<number[]>(
@@ -256,25 +239,6 @@ const OnboardingPage = () => {
     return false;
   };
 
-  React.useEffect(() => {
-    if (userData.onboardingComplete && pathname === "/onboarding") {
-      router.replace("/");
-    }
-  }, [userData.onboardingComplete, router, pathname]);
-
-  if (userData.onboardingComplete && pathname === "/onboarding") {
-    return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-slate-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-teal-400 border-solid mx-auto mb-6"></div>
-          <p className="text-lg text-slate-200">
-            Redirigiendo a la página principal...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 md:p-8 shadow-2xl border border-slate-700">
@@ -327,4 +291,4 @@ const OnboardingPage = () => {
   );
 };
 
-export default OnboardingPage;
+export default Onboarding;

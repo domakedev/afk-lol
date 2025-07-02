@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import { UserData, Goal, Routine } from "@/types";
 import { ICONS } from "@/constants";
@@ -140,7 +141,7 @@ const Reconstruction: React.FC<ReconstructionProps> = ({
               />
               <select
                 value={goalArea}
-                onChange={(e) => setGoalArea(e.target.value as any)}
+                onChange={(e) => setGoalArea(e.target.value as Goal["area"])}
                 className="w-full p-2 bg-slate-700 rounded"
               >
                 <option value="personal">Personal</option>
@@ -204,7 +205,7 @@ const Reconstruction: React.FC<ReconstructionProps> = ({
             </h3>
             <div className="bg-slate-800 p-6 rounded-lg text-center">
               <p className="text-lg text-slate-300 mb-4">
-                "Recupera tu tiempo" probando algo nuevo. Aquí tienes una idea:
+                &quot;Recupera tu tiempo&quot; probando algo nuevo. Aquí tienes una idea:
               </p>
               <p className="text-2xl font-bold text-teal-400 mb-6">
                 {randomHobby}

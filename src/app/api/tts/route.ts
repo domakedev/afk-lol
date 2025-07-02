@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "audio/mpeg",
       },
     });
-  } catch (err) {
+  } catch {
     return new NextResponse("Error interno", { status: 500 });
   }
 }
