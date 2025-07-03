@@ -14,6 +14,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="bg-slate-900 text-white min-h-screen font-sans">
         <main className="min-h-screen flex flex-col">{children}</main>
       </body>

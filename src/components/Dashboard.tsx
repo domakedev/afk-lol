@@ -5,6 +5,7 @@ import { UserData, ActivityEntry, DefeatEntry } from "../types";
 import { ICONS } from "../constants";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { MdOutlineVisibility } from "react-icons/md";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -229,6 +230,33 @@ const ReinforcementOverlay: React.FC<{
   );
 };
 
+// Modal reutilizable para mostrar detalles
+const DetailModal: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}> = ({ open, onClose, title, children }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fade-in-scale min-h-full">
+      <div className="bg-slate-900 rounded-xl shadow-2xl p-6 max-w-md w-full relative border-2 border-teal-400 mx-8">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-slate-400 hover:text-teal-400 text-2xl font-bold focus:outline-none"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+        <h2 className="text-xl font-bold mb-4 text-center text-teal-300">
+          {title}
+        </h2>
+        <div className="max-h-72 overflow-y-auto pr-2">{children}</div>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard: React.FC<{
   userData: UserData;
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
@@ -254,6 +282,68 @@ const Dashboard: React.FC<{
   const [showHorasModal, setShowHorasModal] = useState(false);
   const [horasInput, setHorasInput] = useState("");
   const [horasError, setHorasError] = useState("");
+
+  const [showDetail, setShowDetail] = useState<"victorias" | "derrotas" | null>(
+    null
+  );
+
+  // Indicadores de victorias y derrotas con icono y efecto brillante
+  const IndicatorCard: React.FC<{
+    count: number;
+    color: string;
+    onClick: () => void;
+    active?: boolean;
+  }> = ({ count, color, onClick, active }) => (
+    <button
+      className={`relative flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-xl transition-all duration-150 select-none ${color} shadow-xl text-4xl md:text-5xl text-slate-800 focus:outline-none font-bold overflow-hidden
+      ${
+        active
+          ? "scale-95 shadow-inner"
+          : "hover:scale-105 hover:shadow-2xl active:scale-95 active:shadow-inner"
+      }`}
+      onClick={onClick}
+      type="button"
+      style={{
+        // --- Estilos base para el botón ---
+        outline: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: 0, // Sin padding extra, cuadrado puro
+        borderRadius: "1rem", // Consistente con el resto de la app
+        color: "white",
+        fontWeight: "bold",
+        textShadow: "0px 2px 8px rgba(0,0,0,0.25)",
+        letterSpacing: "0.01em",
+        transition: "all 0.12s cubic-bezier(.4,2,.6,1)",
+        background: color.includes("teal")
+          ? "linear-gradient(135deg, #14b8a6 70%, #0f766e 100%)"
+          : color.includes("red")
+          ? "linear-gradient(135deg, #dc2626 70%, #991b1b 100%)"
+          : "linear-gradient(135deg, #404040 70%, #18181b 100%)",
+        boxShadow: color.includes("teal")
+          ? "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #0f766e60, 0 1.5px 0 #0d9488"
+          : color.includes("red")
+          ? "0 2px 8px 0 #dc2626a0, 0 8px 32px 0 #991b1b60, 0 1.5px 0 #b91c1c"
+          : "0 2px 8px 0 #404040a0, 0 8px 32px 0 #18181b60, 0 1.5px 0 #18181b",
+      }}
+      aria-label="Ver detalles"
+    >
+      {/* Efecto glossy */}
+      <span
+        className="absolute left-0 top-0 w-full h-full rounded-xl pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(120deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.12) 60%,rgba(255,255,255,0.05) 100%)",
+          mixBlendMode: "screen",
+        }}
+      />
+      {/* Icono de ver más */}
+      <span className="absolute top-1.5 right-2 text-slate-100 text-lg md:text-xl pointer-events-none">
+        <MdOutlineVisibility />
+      </span>
+      <span className="z-10">{count}</span>
+    </button>
+  );
 
   const daysAfk = useMemo(() => {
     if (!userData.dayZero) return 0;
@@ -497,11 +587,10 @@ const Dashboard: React.FC<{
       )}
 
       <h1 className="text-3xl font-bold text-slate-100 text-center">
-        ¡Hola, {userData.userName}! Cada día lejos de LoL es una victoria para
-        ti.
+        ¡Hola, {userData.userName}!
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <StatCard title="Días 'AFK'" value={daysAfk} color="text-teal-400" />
         <StatCard
           title="Horas Recuperadas"
@@ -592,7 +681,7 @@ const Dashboard: React.FC<{
         </div>
       </div>
 
-      <div className="text-center text-amber-300 text-sm font-semibold -mt-2 mb-4">
+      <div className="text-center text-amber-300 text-sm font-semibold -mt-1 mb-4">
         {(() => {
           const nextMilestones = [
             { n: 1, label: "Primera Sangre" },
@@ -618,6 +707,79 @@ const Dashboard: React.FC<{
           }
         })()}
       </div>
+
+      {/* Nuevos indicadores de victorias y derrotas */}
+      <div className="flex justify-center gap-8 mb-6 my-5">
+        <IndicatorCard
+          count={userData.activities.length}
+          color="bg-teal-500"
+          onClick={() =>
+            setShowDetail(showDetail === "victorias" ? null : "victorias")
+          }
+          active={showDetail === "victorias"}
+        />
+        <IndicatorCard
+          count={userData.defeats.length}
+          color="bg-red-500"
+          onClick={() =>
+            setShowDetail(showDetail === "derrotas" ? null : "derrotas")
+          }
+          active={showDetail === "derrotas"}
+        />
+      </div>
+
+      <DetailModal
+        open={showDetail === "victorias"}
+        onClose={() => setShowDetail(null)}
+        title="Detalle de Victorias"
+      >
+        {userData.activities.length > 0 ? (
+          userData.activities.map((entry) => (
+            <div
+              key={entry.id}
+              className="bg-slate-800 p-3 rounded-lg flex justify-between items-center mb-2 mx-2 cursor-pointer"
+            >
+              <div>
+                <p className="text-slate-200">{entry.description}</p>
+                <p className="text-xs text-slate-500">{entry.date}</p>
+              </div>
+              <span className="font-semibold text-teal-400">
+                {formatMinutes(entry.timeSpent).display}
+              </span>
+            </div>
+          ))
+        ) : (
+          <p className="text-slate-400 text-center py-4">
+            Aún no has reclamado ninguna victoria.
+          </p>
+        )}
+      </DetailModal>
+      <DetailModal
+        open={showDetail === "derrotas"}
+        onClose={() => setShowDetail(null)}
+        title="Detalle de Derrotas"
+      >
+        {userData.defeats.length > 0 ? (
+          userData.defeats.map((entry) => (
+            <div
+              key={entry.id}
+              className="bg-slate-800 p-3 rounded-lg flex justify-between items-center mb-2"
+            >
+              <div>
+                <p className="text-slate-200">Partida: {entry.gameMode}</p>
+                <p className="text-xs text-slate-500">{entry.date}</p>
+              </div>
+              <span className="font-semibold text-red-400">
+                -{formatMinutes(entry.timeLost).display}
+              </span>
+            </div>
+          ))
+        ) : (
+          <p className="text-slate-400 text-center py-4">
+            ¡Sin recaídas! Sigue así.
+          </p>
+        )}
+      </DetailModal>
 
       <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 shadow-2xl border border-slate-700">
         <div className="flex border-b border-slate-700 mb-4">
@@ -752,64 +914,6 @@ const Dashboard: React.FC<{
           Necesito motivación (¡ayúdame a no recaer!)
         </span>
       </button>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-        <div>
-          <h2 className="text-xl font-semibold mb-3 text-slate-200">
-            Registro de Victorias
-          </h2>
-          <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-            {userData?.activities?.length > 0 ? (
-              userData.activities.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="bg-slate-800 p-3 rounded-lg flex justify-between items-center"
-                >
-                  <div>
-                    <p className="text-slate-200">{entry.description}</p>
-                    <p className="text-xs text-slate-500">{entry.date}</p>
-                  </div>
-                  <span className="font-semibold text-teal-400">
-                    {formatMinutes(entry.timeSpent).display}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-slate-400 text-center py-4">
-                Aún no has reclamado ninguna victoria. ¡Empieza ahora!
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-3 text-slate-200">
-            Registro de Derrotas
-          </h2>
-          <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
-            {userData?.activities?.length > 0 ? (
-              userData.defeats.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="bg-slate-800 p-3 rounded-lg flex justify-between items-center"
-                >
-                  <div>
-                    <p className="text-slate-200">Partida: {entry.gameMode}</p>
-                    <p className="text-xs text-slate-500">{entry.date}</p>
-                  </div>
-                  <span className="font-semibold text-red-400">
-                    -{formatMinutes(entry.timeLost).display}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-slate-400 text-center py-4">
-                ¡Sin recaídas! Sigue así.
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
