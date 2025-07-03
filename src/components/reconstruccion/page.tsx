@@ -1,7 +1,24 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { UserData, Goal, Routine } from "@/types";
 import { ICONS } from "@/constants";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Reconstruye tu Vida Después de Dejar el LoL",
+  description:
+    "Aprende a gestionar tu tiempo, establecer metas efectivas y encontrar nuevos hobbies. Recupera el tiempo perdido y construye hábitos positivos con LOL AFK.",
+  keywords: [
+    "qué hacer después de dejar de jugar",
+    "gestión del tiempo",
+    "nuevos hábitos",
+    "establecer metas",
+    "recuperar vida",
+  ],
+  alternates: {
+    canonical: "/reconstruir",
+  },
+};
 
 interface ReconstructionProps {
   userData: UserData;
@@ -205,7 +222,8 @@ const Reconstruction: React.FC<ReconstructionProps> = ({
             </h3>
             <div className="bg-slate-800 p-6 rounded-lg text-center">
               <p className="text-lg text-slate-300 mb-4">
-                &quot;Recupera tu tiempo&quot; probando algo nuevo. Aquí tienes una idea:
+                &quot;Recupera tu tiempo&quot; probando algo nuevo. Aquí tienes
+                una idea:
               </p>
               <p className="text-2xl font-bold text-teal-400 mb-6">
                 {randomHobby}
