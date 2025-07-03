@@ -8,8 +8,10 @@ export async function saveUserData(userData: UserData) {
   if (!auth.currentUser) return;
   console.log("llegue aquiu");
   try {
-    const asd = await setDoc(doc(db, "users", auth.currentUser.uid), userData);
-    console.log("🚀 ~ saveUserData ~ asd:", asd);
+    await setDoc(doc(db, "users", auth.currentUser.uid), {
+      ...userData,
+      email: auth.currentUser.email || null,
+    });
   } catch (error) {
     console.error("Error saving user data:", error);
   }
@@ -22,12 +24,17 @@ export async function loadUserData(): Promise<UserData> {
     const snap = await getDoc(userRef);
     console.log("🚀 ~ loadUserData ~ snap:", snap);
     if (snap.exists()) {
-      return snap.data() as UserData;
+      const data = snap.data() as UserData;
+      return {
+        ...data,
+        email: auth.currentUser.email || null,
+      };
     } else {
       // Datos iniciales por defecto
       const initialData: UserData = {
         onboardingComplete: false,
-        userName: "",
+        userName: auth.currentUser.email || "",
+        email: auth.currentUser.email || null,
         dayZero: null,
         commitment: "",
         assessmentScore: 0,
