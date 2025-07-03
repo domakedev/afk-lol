@@ -301,9 +301,10 @@ const Dashboard: React.FC<{
     color: string;
     onClick: () => void;
     active?: boolean;
-  }> = ({ count, color, onClick, active }) => (
+    label: string; // Nuevo: texto debajo del número
+  }> = ({ count, color, onClick, active, label }) => (
     <button
-      className={`relative flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-xl transition-all duration-150 select-none ${color} shadow-xl text-4xl md:text-5xl text-slate-800 focus:outline-none font-bold overflow-hidden
+      className={`relative flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-xl transition-all duration-150 select-none ${color} shadow-xl text-4xl md:text-5xl text-slate-800 focus:outline-none font-bold overflow-hidden
       ${
         active
           ? "scale-95 shadow-inner"
@@ -354,6 +355,9 @@ const Dashboard: React.FC<{
         <MdOutlineVisibility />
       </span>
       <span className="z-10">{count}</span>
+      <span className="z-10 text-xs mt-1 font-semibold tracking-tight text-white drop-shadow-sm pointer-events-none">
+        {label}
+      </span>
     </button>
   );
 
@@ -747,6 +751,7 @@ const Dashboard: React.FC<{
             setShowDetail(showDetail === "victorias" ? null : "victorias")
           }
           active={showDetail === "victorias"}
+          label="Victorias"
         />
         <IndicatorCard
           count={userData.defeats.length}
@@ -755,6 +760,7 @@ const Dashboard: React.FC<{
             setShowDetail(showDetail === "derrotas" ? null : "derrotas")
           }
           active={showDetail === "derrotas"}
+          label="Derrotas"
         />
       </div>
 
@@ -816,6 +822,16 @@ const Dashboard: React.FC<{
           </p>
         )}
       </DetailModal>
+
+      <button
+        onClick={() => setShowReinforcement(true)}
+        className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2"
+      >
+        {ICONS.shield}{" "}
+        <span className="ml-2">
+          Necesito motivación (¡ayúdame a no recaer!)
+        </span>
+      </button>
 
       <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 shadow-2xl border border-slate-700">
         <div className="flex border-b border-slate-700 mb-4">
@@ -954,16 +970,6 @@ const Dashboard: React.FC<{
           </div>
         )}
       </div>
-
-      <button
-        onClick={() => setShowReinforcement(true)}
-        className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2"
-      >
-        {ICONS.shield}{" "}
-        <span className="ml-2">
-          Necesito motivación (¡ayúdame a no recaer!)
-        </span>
-      </button>
     </div>
   );
 };
