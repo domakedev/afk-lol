@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut, signInAnonymously } from "firebase/auth";
 import { auth } from "../firebase";
 import { ICONS } from "@/constants";
-import { UserData } from "@/types";
 import Dashboard from "@/components/Dashboard";
 import ToolkitPage from "../components/toolkit/page";
 import Reconstruction from "../components/reconstruccion/page";
@@ -13,16 +12,24 @@ import Onboarding from "@/components/Onboarding";
 import Login from "../components/Login";
 import LandingPage from "@/components/LandingPage";
 import { loadUserData, saveUserData } from "../firebaseUserData";
+import { useUserStore } from "../store/userStore";
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<unknown>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const {
+    user,
+    userData,
+    isGuest,
+    loading,
+    setUser,
+    setUserData,
+    setIsGuest,
+    setLoading,
+  } = useUserStore();
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [loading, setLoading] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
-  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const unsub = onAuthStateChanged(auth, async (firebaseUser: any) => {
       setUser(firebaseUser);
       setIsGuest(firebaseUser?.isAnonymous || false);
@@ -52,7 +59,7 @@ const App: React.FC = () => {
       setLoading(false);
     });
     return () => unsub();
-  }, []);
+  }, [setUser, setUserData, setIsGuest, setLoading]);
 
   useEffect(() => {
     if (user && userData) saveUserData(userData);
@@ -60,7 +67,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setLoading(false);
-  }, []);
+  }, [setLoading]);
 
   // Forzar dashboard al terminar onboarding
   useEffect(() => {
@@ -72,55 +79,19 @@ const App: React.FC = () => {
   const renderContent = () => {
     if (!userData) return null;
     if (!userData.onboardingComplete) {
-      return (
-        <Onboarding
-          setUserData={
-            setUserData as React.Dispatch<React.SetStateAction<UserData>>
-          }
-        />
-      );
+      return <Onboarding />;
     }
     switch (activeTab) {
       case "dashboard":
-        return (
-          <Dashboard
-            userData={userData}
-            setUserData={
-              setUserData as React.Dispatch<React.SetStateAction<UserData>>
-            }
-            isGuest={isGuest}
-            onShowLogin={() => setShowLogin(true)}
-          />
-        );
+        return <Dashboard onShowLogin={() => setShowLogin(true)} />;
       case "toolkit":
-        return (
-          <ToolkitPage
-            userData={userData}
-            setUserData={
-              setUserData as React.Dispatch<React.SetStateAction<UserData>>
-            }
-          />
-        );
+        return <ToolkitPage />;
       case "reconstruction":
-        return (
-          <Reconstruction
-            userData={userData}
-            setUserData={
-              setUserData as React.Dispatch<React.SetStateAction<UserData>>
-            }
-          />
-        );
+        return <Reconstruction />;
       case "education":
         return <Education />;
       default:
-        return (
-          <Dashboard
-            userData={userData}
-            setUserData={
-              setUserData as React.Dispatch<React.SetStateAction<UserData>>
-            }
-          />
-        );
+        return <Dashboard />;
     }
   };
 
@@ -149,7 +120,7 @@ const App: React.FC = () => {
     try {
       await signInAnonymously(auth);
       setIsGuest(true);
-    } catch (e) {
+    } catch {
       // Manejar error si se desea
     } finally {
       setLoading(false);

@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { UserData, TriggerEntry, CbtEntry } from "@/types";
+import { TriggerEntry, CbtEntry } from "@/types";
 import { ICONS } from "@/constants";
-interface ToolkitProps {
-  userData: UserData;
-  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-}
+import { useUserStore } from "../../store/userStore";
 
-const Toolkit: React.FC<ToolkitProps> = ({ userData, setUserData }) => {
+const Toolkit: React.FC = () => {
+  const userData = useUserStore((state) => state.userData)!;
+  const updateUserData = useUserStore((state) => state.updateUserData);
+
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [showSOS, setShowSOS] = useState(false);
 
@@ -41,10 +41,7 @@ const Toolkit: React.FC<ToolkitProps> = ({ userData, setUserData }) => {
       feeling: triggerFeeling,
       action: triggerAction,
     };
-    setUserData((prev) => ({
-      ...prev,
-      triggers: [newTrigger, ...prev.triggers],
-    }));
+    updateUserData({ triggers: [newTrigger, ...userData.triggers] });
     setTriggerSituation("");
     setTriggerThought("");
     setTriggerFeeling("");
@@ -64,10 +61,7 @@ const Toolkit: React.FC<ToolkitProps> = ({ userData, setUserData }) => {
       alternativeThought: cbtAltThought,
       outcome: cbtOutcome,
     };
-    setUserData((prev) => ({
-      ...prev,
-      cbtEntries: [newEntry, ...prev.cbtEntries],
-    }));
+    updateUserData({ cbtEntries: [newEntry, ...userData.cbtEntries] });
     // Reset fields
     setCbtSituation("");
     setCbtAutoThought("");

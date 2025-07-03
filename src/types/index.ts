@@ -7,44 +7,44 @@ export interface ActivityEntry {
 }
 
 export interface Goal {
-    id:string;
-    text: string;
-    area: 'personal' | 'profesional' | 'salud' | 'social';
-    deadline: string;
-    isCompleted: boolean;
+  id: string;
+  text: string;
+  area: "personal" | "profesional" | "salud" | "social";
+  deadline: string;
+  isCompleted: boolean;
 }
 
 export interface Routine {
-    id: string;
-    text: string;
-    time: string;
-    isCompleted: boolean;
+  id: string;
+  text: string;
+  time: string;
+  isCompleted: boolean;
 }
 
 export interface TriggerEntry {
-    id: string;
-    date: string;
-    situation: string;
-    thought: string;
-    feeling: string;
-    action: string;
+  id: string;
+  date: string;
+  situation: string;
+  thought: string;
+  feeling: string;
+  action: string;
 }
 
 export interface CbtEntry {
-    id: string;
-    date: string;
-    situation: string;
-    automaticThought: string;
-    evidenceFor: string;
-    evidenceAgainst: string;
-    alternativeThought: string;
-    outcome: string;
+  id: string;
+  date: string;
+  situation: string;
+  automaticThought: string;
+  evidenceFor: string;
+  evidenceAgainst: string;
+  alternativeThought: string;
+  outcome: string;
 }
 
 export interface DefeatEntry {
   id: string;
   date: string;
-  gameMode: 'ARAM' | 'TFT' | 'Ranked' | 'Normales';
+  gameMode: "ARAM" | "TFT" | "Ranked" | "Normales";
   timeLost: number; // in minutes
   feeling: string; // Nuevo campo: ¿Cómo te sientes?
 }
@@ -65,4 +65,5 @@ export interface UserData {
   triggers: TriggerEntry[];
   cbtEntries: CbtEntry[];
   defeats: DefeatEntry[];
+  lastStreakDate?: string;
 }

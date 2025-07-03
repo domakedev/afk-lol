@@ -4,12 +4,10 @@ import React, { useState } from "react";
 import { UserData } from "@/types";
 import { ASSESSMENT_QUESTIONS, ICONS } from "@/constants";
 import { saveUserData } from "@/firebaseUserData";
+import { useUserStore } from "../store/userStore";
 
-interface OnboardingProps {
-  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-}
-
-const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
+const Onboarding: React.FC = () => {
+  const setUserData = useUserStore((state) => state.setUserData);
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [answers, setAnswers] = useState<number[]>(
@@ -64,6 +62,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
       triggers: [],
       cbtEntries: [],
       defeats: [],
+      email: null
     };
     setUserData(newUserData);
     saveUserData(newUserData); // <-- Guardar en Firestore inmediatamente

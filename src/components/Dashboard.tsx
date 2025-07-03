@@ -6,6 +6,7 @@ import { ICONS } from "../constants";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { MdOutlineVisibility } from "react-icons/md";
+import { useUserStore } from "../store/userStore";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -268,12 +269,10 @@ const DetailModal: React.FC<{
 
 type UserDataWithStreak = UserData & { lastStreakDate?: string };
 
-const Dashboard: React.FC<{
-  userData: UserDataWithStreak;
-  setUserData: React.Dispatch<React.SetStateAction<UserDataWithStreak>>;
-  isGuest?: boolean;
-  onShowLogin?: () => void;
-}> = ({ userData, setUserData, isGuest, onShowLogin }) => {
+const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
+  const userData = useUserStore((state) => state.userData) as UserDataWithStreak;
+  const isGuest = useUserStore((state) => state.isGuest);
+  const updateUserData = useUserStore((state) => state.updateUserData);
   const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
@@ -438,23 +437,21 @@ const Dashboard: React.FC<{
     const today = new Date();
     const todayStr = today.toLocaleDateString("es-ES");
     if (userData.lastStreakDate !== todayStr && userData.killStreak > 0) {
-      setUserData((prev) => ({
-        ...prev,
+      updateUserData({
         killStreak: 0,
-        lastStreakDate: todayStr,
-      }));
+        // lastStreakDate: todayStr, // Elimina lastStreakDate de los updates directos
+      });
     }
-  }, [userData.lastStreakDate, userData.killStreak, setUserData]);
+  }, [userData.lastStreakDate, userData.killStreak, updateUserData]);
 
   // Asegura que lastStreakDate exista en userData
   React.useEffect(() => {
     if (userData.lastStreakDate === undefined) {
-      setUserData((prev) => ({
-        ...prev,
+      updateUserData({
         lastStreakDate: new Date().toLocaleDateString("es-ES"),
-      }));
+      });
     }
-  }, [userData.lastStreakDate, setUserData]);
+  }, [userData.lastStreakDate, updateUserData]);
 
   const handleClaimVictory = () => {
     const h = parseInt(hours || "0", 10);
@@ -486,13 +483,12 @@ const Dashboard: React.FC<{
     const newTotalRecuperadas = oldTotalRecuperadas + timeSpent;
     const newKillStreak = userData.killStreak + 1;
 
-    setUserData((prev) => ({
-      ...prev,
+    updateUserData({
       horasRecuperadas: newTotalRecuperadas,
       killStreak: newKillStreak,
-      lastStreakDate: new Date().toLocaleDateString("es-ES"),
-      activities: [newEntry, ...prev.activities].slice(0, 50),
-    }));
+      // lastStreakDate: new Date().toLocaleDateString("es-ES"), // Elimina lastStreakDate de los updates directos
+      activities: [newEntry, ...userData.activities].slice(0, 50),
+    });
 
     (async () => {
       let milestoneAnnounced = false;
@@ -572,12 +568,11 @@ const Dashboard: React.FC<{
 
     const oldKillStreak = userData.killStreak;
 
-    setUserData((prev) => ({
-      ...prev,
-      horasPorRecuperar: prev.horasPorRecuperar + timeLost,
+    updateUserData({
+      horasPorRecuperar: userData.horasPorRecuperar + timeLost,
       killStreak: 0,
-      defeats: [newDefeat, ...prev.defeats].slice(0, 50),
-    }));
+      defeats: [newDefeat, ...userData.defeats].slice(0, 50),
+    });
 
     (async () => {
       if (oldKillStreak > 0) {
@@ -744,10 +739,9 @@ const Dashboard: React.FC<{
                         setHorasError("Introduce un número válido de horas");
                         return;
                       }
-                      setUserData((prev) => ({
-                        ...prev,
+                      updateUserData({
                         horasPorRecuperar: horas * 60,
-                      }));
+                      });
                       setShowHorasModal(false);
                     }}
                   >

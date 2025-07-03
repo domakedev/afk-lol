@@ -1,17 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { UserData, Goal, Routine } from "@/types";
+import {  Goal, Routine } from "@/types";
 import { ICONS } from "@/constants";
+import { useUserStore } from "../../store/userStore";
 
-interface ReconstructionProps {
-  userData: UserData;
-  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-}
+const Reconstruction: React.FC = () => {
+  const userData = useUserStore((state) => state.userData)!;
+  const updateUserData = useUserStore((state) => state.updateUserData);
 
-const Reconstruction: React.FC<ReconstructionProps> = ({
-  userData,
-  setUserData,
-}) => {
   const [activeView, setActiveView] = useState("menu");
 
   // Goal state
@@ -48,18 +44,17 @@ const Reconstruction: React.FC<ReconstructionProps> = ({
       deadline: goalDeadline,
       isCompleted: false,
     };
-    setUserData((prev) => ({ ...prev, goals: [...prev.goals, newGoal] }));
+    updateUserData({ goals: [newGoal, ...userData.goals] });
     setGoalText("");
     setGoalDeadline("");
   };
 
   const toggleGoal = (id: string) => {
-    setUserData((prev) => ({
-      ...prev,
-      goals: prev.goals.map((g) =>
+    updateUserData({
+      goals: userData.goals.map((g) =>
         g.id === id ? { ...g, isCompleted: !g.isCompleted } : g
       ),
-    }));
+    });
   };
 
   const addRoutine = () => {
@@ -70,12 +65,11 @@ const Reconstruction: React.FC<ReconstructionProps> = ({
       time: routineTime,
       isCompleted: false,
     };
-    setUserData((prev) => ({
-      ...prev,
-      routines: [...prev.routines, newRoutine].sort((a, b) =>
+    updateUserData({
+      routines: [...userData.routines, newRoutine].sort((a, b) =>
         a.time.localeCompare(b.time)
       ),
-    }));
+    });
     setRoutineText("");
     setRoutineTime("");
   };
