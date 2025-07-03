@@ -17,15 +17,18 @@ export default function Login({
   const {
     register: formRegister,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     setError: setFormError,
     clearErrors,
   } = useForm<{ email: string; pass: string }>();
   const [error, setError] = useState("");
+  const [isSubmittingLogin, setIsSubmittingLogin] = useState(false);
+  const [isSubmittingRegister, setIsSubmittingRegister] = useState(false);
 
   const onSubmit = async (data: { email: string; pass: string }) => {
     setError("");
     clearErrors();
+    setIsSubmittingLogin(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.pass);
       onLogin();
@@ -33,12 +36,15 @@ export default function Login({
       setError("Usuario o contraseña incorrectos");
       setFormError("email", { type: "manual", message: " " });
       setFormError("pass", { type: "manual", message: " " });
+    } finally {
+      setIsSubmittingLogin(false);
     }
   };
 
   const onRegister = async (data: { email: string; pass: string }) => {
     setError("");
     clearErrors();
+    setIsSubmittingRegister(true);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.pass);
       onLogin();
@@ -46,6 +52,8 @@ export default function Login({
       setError("No se pudo registrar");
       setFormError("email", { type: "manual", message: " " });
       setFormError("pass", { type: "manual", message: " " });
+    } finally {
+      setIsSubmittingRegister(false);
     }
   };
 
@@ -63,8 +71,9 @@ export default function Login({
       )}
       <div className="w-full max-w-sm bg-slate-800/80 rounded-2xl shadow-2xl border border-slate-700 p-8 flex flex-col gap-6 animate-fade-in-scale relative">
         <h1 className="text-2xl font-bold text-center text-teal-400 mb-2 drop-shadow">
-          Iniciar sesión
+          Bienvenido
         </h1>
+        <div className="flex flex-col gap-1 text-center"></div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <input
@@ -82,7 +91,7 @@ export default function Login({
                   : "border-slate-700 focus:ring-teal-500"
               }`}
               autoComplete="email"
-              disabled={isSubmitting}
+              disabled={isSubmittingLogin || isSubmittingRegister}
             />
             {errors.email && (
               <div className="text-red-400 text-xs mt-1">
@@ -107,7 +116,7 @@ export default function Login({
                   : "border-slate-700 focus:ring-teal-500"
               }`}
               autoComplete="current-password"
-              disabled={isSubmitting}
+              disabled={isSubmittingLogin || isSubmittingRegister}
             />
             {errors.pass && (
               <div className="text-red-400 text-xs mt-1">
@@ -122,20 +131,27 @@ export default function Login({
           )}
           <button
             type="submit"
-            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 shadow-md mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
+            className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 shadow-md mt-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            disabled={isSubmittingLogin}
           >
-            {isSubmitting ? "Entrando..." : "Iniciar sesión"}
+            <span>{isSubmittingLogin ? "Entrando..." : "Iniciar sesión"}</span>
           </button>
-        <div className="flex flex-col gap-2 mt-2">
-          <button
-            onClick={handleSubmit(onRegister)}
-            className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Registrando..." : "Registrarse"}
-          </button>
-        </div>
+          <div className="flex flex-col gap-2 mt-2">
+            <button
+              type="button"
+              onClick={handleSubmit(onRegister)}
+              className="w-full bg-amber-500/90 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 shadow-md disabled:opacity-60 disabled:cursor-not-allowed flex flex-col items-center cursor-pointer"
+              disabled={isSubmittingRegister}
+            >
+              <span>
+                {isSubmittingRegister ? "Registrando..." : "Crear nueva cuenta"}
+              </span>
+            </button>
+            <p className="text-xs w-full text-center text-slate-400">
+              Al hacer <span className="font-bold">click</span> crearás una
+              cuenta nueva
+            </p>
+          </div>
         </form>
       </div>
     </div>
