@@ -6,17 +6,6 @@ import {
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase";
 import { FaArrowLeft } from "react-icons/fa";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Iniciar Sesión",
-  description:
-    "Accede a tu panel de control de LOL AFK y continúa tu progreso para dejar League of Legends.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
 
 export default function Login({
   onLogin,

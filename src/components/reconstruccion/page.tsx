@@ -2,23 +2,6 @@
 import React, { useState } from "react";
 import { UserData, Goal, Routine } from "@/types";
 import { ICONS } from "@/constants";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Reconstruye tu Vida Después de Dejar el LoL",
-  description:
-    "Aprende a gestionar tu tiempo, establecer metas efectivas y encontrar nuevos hobbies. Recupera el tiempo perdido y construye hábitos positivos con LOL AFK.",
-  keywords: [
-    "qué hacer después de dejar de jugar",
-    "gestión del tiempo",
-    "nuevos hábitos",
-    "establecer metas",
-    "recuperar vida",
-  ],
-  alternates: {
-    canonical: "/reconstruir",
-  },
-};
 
 interface ReconstructionProps {
   userData: UserData;

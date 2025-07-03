@@ -2,23 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { UserData, TriggerEntry, CbtEntry } from "@/types";
 import { ICONS } from "@/constants";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Herramientas para Superar la Adicción a LoL",
-  description:
-    'Descubre las herramientas basadas en TCC de LOL AFK: el Botón de Refuerzo para crisis y el sistema de "Reclamar Victoria" para gamificar tus logros en la vida real.',
-  keywords: [
-    "herramientas TCC",
-    "botón de crisis",
-    "gamificar progreso",
-    "seguimiento de hábitos",
-  ],
-  alternates: {
-    canonical: "/toolkit",
-  },
-};
-
 interface ToolkitProps {
   userData: UserData;
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;

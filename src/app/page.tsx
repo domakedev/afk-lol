@@ -13,23 +13,6 @@ import Onboarding from "@/components/Onboarding";
 import Login from "../components/Login";
 import LandingPage from "@/components/LandingPage";
 import { loadUserData, saveUserData } from "../firebaseUserData";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Cómo Dejar League of Legends | App Gratuita para Desintoxicarse",
-  description:
-    "¿Quieres dejar el LoL y no sabes cómo? LOL AFK es la app gratis que te ayuda a desintoxicarte, gamificar tu progreso y recuperar el control de tu vida. ¡Empieza hoy!",
-  keywords: [
-    "cómo dejar el lol",
-    "dejar de jugar lol",
-    "desintoxicación digital lol",
-    "app para dejar videojuegos",
-    "gamificar dejar de jugar",
-  ],
-  alternates: {
-    canonical: "/",
-  },
-};
 
 const App: React.FC = () => {
   const [user, setUser] = useState<unknown>(null);
