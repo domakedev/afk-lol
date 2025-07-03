@@ -326,7 +326,7 @@ const Dashboard: React.FC<{
     setUserData((prev) => ({
       ...prev,
       horasRecuperadas: newTotalRecuperadas,
-      horasPorRecuperar: Math.max(0, prev.horasPorRecuperar - timeSpent),
+      // horasPorRecuperar ya no disminuye al reclamar victoria
       killStreak: newKillStreak,
       activities: [newEntry, ...prev.activities].slice(0, 50),
     }));
@@ -485,7 +485,7 @@ const Dashboard: React.FC<{
           color="text-indigo-400"
         />
         <StatCard
-          title="Horas por Recuperar"
+          title="Horas totales a recuperar"
           value={formatMinutes(userData.horasPorRecuperar).display}
           subValue="meta"
           color="text-amber-400"
