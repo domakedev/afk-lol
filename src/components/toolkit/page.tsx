@@ -103,7 +103,7 @@ const Toolkit: React.FC<ToolkitProps> = ({ userData, setUserData }) => {
     return (
       <div className="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 p-4">
         <h2 className="text-3xl font-bold text-teal-400 mb-8">
-          Respira Profundo
+          Respira Profundo y Relájate
         </h2>
         <div className="relative w-48 h-48 flex items-center justify-center">
           <div
