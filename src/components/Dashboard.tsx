@@ -271,7 +271,9 @@ type UserDataWithStreak = UserData & { lastStreakDate?: string };
 const Dashboard: React.FC<{
   userData: UserDataWithStreak;
   setUserData: React.Dispatch<React.SetStateAction<UserDataWithStreak>>;
-}> = ({ userData, setUserData }) => {
+  isGuest?: boolean;
+  onShowLogin?: () => void;
+}> = ({ userData, setUserData, isGuest, onShowLogin }) => {
   const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
@@ -596,6 +598,17 @@ const Dashboard: React.FC<{
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
+      {isGuest && (
+        <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-semibold w-full mb-4 rounded">
+          Estás como invitado.{" "}
+          <span
+            className="underline cursor-pointer"
+            onClick={onShowLogin}
+          >
+            Regístrate para guardar tu progreso de forma más segura.
+          </span>
+        </div>
+      )}
       {/* Confetti para pentakill */}
       {visualEffect === "penta-kill" && showVictoryFlash && (
         <Confetti
@@ -646,6 +659,15 @@ const Dashboard: React.FC<{
       <h1 className="text-3xl font-bold text-slate-100 text-center">
         ¡Hola, {userData.userName}!
       </h1>
+      <div className="text-center text-slate-400 text-sm mb-2">
+        {userData.email ? (
+          <>
+            <span className="font-semibold text-teal-300">Correo:</span> {userData.email}
+          </>
+        ) : (
+          <span className="font-semibold text-yellow-500">Invitado</span>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         <StatCard title="Días 'AFK'" value={daysAfk} color="text-teal-400" />

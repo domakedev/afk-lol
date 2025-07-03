@@ -52,6 +52,7 @@ export interface DefeatEntry {
 export interface UserData {
   onboardingComplete: boolean;
   userName: string;
+  email: string | null;
   dayZero: string | null;
   commitment: string;
   assessmentScore: number;

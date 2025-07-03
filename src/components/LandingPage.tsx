@@ -3,10 +3,14 @@ import React, { useState } from "react";
 
 export default function LandingPage({
   onLoginClick,
+  onGuestClick,
 }: {
   onLoginClick: (mode?: "register") => void;
+  onGuestClick: () => void;
 }) {
-  const [hovered, setHovered] = useState<"login" | "register" | null>(null);
+  const [hovered, setHovered] = useState<"login" | "register" | "guest" | null>(
+    null
+  );
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 px-4 relative overflow-hidden">
       {/* Fondo decorativo */}
@@ -92,6 +96,16 @@ export default function LandingPage({
             }`}
           >
             <span className="text-2xl">📝</span> Registrarse
+          </button>
+          <button
+            onClick={onGuestClick}
+            onMouseEnter={() => setHovered("guest")}
+            onMouseLeave={() => setHovered(null)}
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-700 text-white font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-800 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
+              hovered === "guest" ? "scale-105 shadow-2xl" : ""
+            }`}
+          >
+            <span className="text-2xl">👤</span> Continuar como invitado
           </button>
         </div>
         <div className="mt-8 text-xs text-slate-500 text-center">

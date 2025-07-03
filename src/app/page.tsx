@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, signInAnonymously } from "firebase/auth";
 import { auth } from "../firebase";
 import { ICONS } from "@/constants";
 import { UserData } from "@/types";
@@ -20,38 +20,37 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(
-      auth,
-      async (firebaseUser: { email: unknown }) => {
-        setUser(firebaseUser);
-        if (firebaseUser) {
-          const data = await loadUserData();
-          setUserData(
-            data || {
-              onboardingComplete: false,
-              userName: firebaseUser.email || "",
-              dayZero: new Date().toISOString().slice(0, 10),
-              horasRecuperadas: 0,
-              horasPorRecuperar: 0,
-              killStreak: 0,
-              activities: [],
-              defeats: [],
-              commitment: "",
-              goals: [],
-              routines: [],
-              triggers: [],
-              cbtEntries: [],
-              assessmentScore: 0,
-            }
-          );
-        } else {
-          setUserData(null);
-        }
-        setLoading(false);
+    const unsub = onAuthStateChanged(auth, async (firebaseUser: any) => {
+      setUser(firebaseUser);
+      setIsGuest(firebaseUser?.isAnonymous || false);
+      if (firebaseUser) {
+        const data = await loadUserData();
+        setUserData(
+          data || {
+            onboardingComplete: false,
+            userName: firebaseUser.email || "",
+            dayZero: new Date().toISOString().slice(0, 10),
+            horasRecuperadas: 0,
+            horasPorRecuperar: 0,
+            killStreak: 0,
+            activities: [],
+            defeats: [],
+            commitment: "",
+            goals: [],
+            routines: [],
+            triggers: [],
+            cbtEntries: [],
+            assessmentScore: 0,
+          }
+        );
+      } else {
+        setUserData(null);
       }
-    );
+      setLoading(false);
+    });
     return () => unsub();
   }, []);
 
@@ -89,6 +88,8 @@ const App: React.FC = () => {
             setUserData={
               setUserData as React.Dispatch<React.SetStateAction<UserData>>
             }
+            isGuest={isGuest}
+            onShowLogin={() => setShowLogin(true)}
           />
         );
       case "toolkit":
@@ -143,18 +144,51 @@ const App: React.FC = () => {
     </button>
   );
 
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await signInAnonymously(auth);
+      setIsGuest(true);
+    } catch (e) {
+      // Manejar error si se desea
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="text-center mt-10">Cargando...</div>;
   if (!user) {
     if (showLogin) {
-      return <Login onLogin={() => setLoading(true)} onCancel={() => setShowLogin(false)} />;
+      return (
+        <Login
+          onLogin={() => setLoading(true)}
+          onCancel={() => setShowLogin(false)}
+        />
+      );
     }
-    return <LandingPage onLoginClick={() => setShowLogin(true)} />;
+    return (
+      <LandingPage
+        onLoginClick={() => setShowLogin(true)}
+        onGuestClick={handleGuestLogin}
+      />
+    );
   }
   if (!userData)
     return <div className="text-center mt-10">Cargando datos...</div>;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col">
+      {isGuest && (
+        <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-semibold w-full">
+          Estás como invitado.{" "}
+          <span
+            className="underline cursor-pointer"
+            onClick={() => setShowLogin(true)}
+          >
+            Regístrate para guardar tu progreso de forma más segura.
+          </span>
+        </div>
+      )}
       <main className="flex-grow pt-6 pb-20">
         {renderContent()}
         <button

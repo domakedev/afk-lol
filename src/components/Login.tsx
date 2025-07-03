@@ -2,6 +2,8 @@ import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase";
@@ -46,7 +48,13 @@ export default function Login({
     clearErrors();
     setIsSubmittingRegister(true);
     try {
-      await createUserWithEmailAndPassword(auth, data.email, data.pass);
+      if (auth.currentUser && auth.currentUser.isAnonymous) {
+        // Vincular cuenta anónima con email
+        const credential = EmailAuthProvider.credential(data.email, data.pass);
+        await linkWithCredential(auth.currentUser, credential);
+      } else {
+        await createUserWithEmailAndPassword(auth, data.email, data.pass);
+      }
       onLogin();
     } catch {
       setError("No se pudo registrar");
