@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebase";
 import { ICONS } from "@/constants";
 import { UserData } from "@/types";
 import Dashboard from "@/components/Dashboard";
@@ -9,28 +10,52 @@ import ToolkitPage from "../components/toolkit/page";
 import Reconstruction from "../components/reconstruccion/page";
 import Education from "./educacion/page";
 import Onboarding from "@/components/Onboarding";
-// import Onboarding from "./onboarding/page";
+import Login from "../components/Login";
+import { loadUserData, saveUserData } from "../firebaseUserData";
 
 const App: React.FC = () => {
-  const [userData, setUserData] = useLocalStorage<UserData>("lol-afk-data", {
-    onboardingComplete: false,
-    userName: "",
-    dayZero: null,
-    commitment: "",
-    assessmentScore: 0,
-    horasRecuperadas: 0,
-    horasPorRecuperar: 0, // Set by user during onboarding
-    killStreak: 0,
-    activities: [],
-    goals: [],
-    routines: [],
-    triggers: [],
-    cbtEntries: [],
-    defeats: [],
-  });
-
+  const [user, setUser] = useState<unknown>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(
+      auth,
+      async (firebaseUser: { email: unknown }) => {
+        setUser(firebaseUser);
+        if (firebaseUser) {
+          const data = await loadUserData();
+          setUserData(
+            data || {
+              onboardingComplete: false,
+              userName: firebaseUser.email || "",
+              dayZero: new Date().toISOString().slice(0, 10),
+              horasRecuperadas: 0,
+              horasPorRecuperar: 0,
+              killStreak: 0,
+              activities: [],
+              defeats: [],
+              commitment: "",
+              goals: [],
+              routines: [],
+              triggers: [],
+              cbtEntries: [],
+              assessmentScore: 0,
+            }
+          );
+        } else {
+          setUserData(null);
+        }
+        setLoading(false);
+      }
+    );
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (user && userData) saveUserData(userData);
+  }, [userData, user]);
 
   useEffect(() => {
     setLoading(false);
@@ -38,23 +63,61 @@ const App: React.FC = () => {
 
   // Forzar dashboard al terminar onboarding
   useEffect(() => {
-    if (userData.onboardingComplete) {
+    if (userData && userData.onboardingComplete) {
       setActiveTab("dashboard");
     }
-  }, [userData.onboardingComplete]);
+  }, [userData]);
 
   const renderContent = () => {
+    if (!userData) return null;
+    if (!userData.onboardingComplete) {
+      return (
+        <Onboarding
+          setUserData={
+            setUserData as React.Dispatch<React.SetStateAction<UserData>>
+          }
+        />
+      );
+    }
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard userData={userData} setUserData={setUserData} />;
+        return (
+          <Dashboard
+            userData={userData}
+            setUserData={
+              setUserData as React.Dispatch<React.SetStateAction<UserData>>
+            }
+          />
+        );
       case "toolkit":
-        return <ToolkitPage userData={userData} setUserData={setUserData} />;
+        return (
+          <ToolkitPage
+            userData={userData}
+            setUserData={
+              setUserData as React.Dispatch<React.SetStateAction<UserData>>
+            }
+          />
+        );
       case "reconstruction":
-        return <Reconstruction userData={userData} setUserData={setUserData} />;
+        return (
+          <Reconstruction
+            userData={userData}
+            setUserData={
+              setUserData as React.Dispatch<React.SetStateAction<UserData>>
+            }
+          />
+        );
       case "education":
         return <Education />;
       default:
-        return <Dashboard userData={userData} setUserData={setUserData} />;
+        return (
+          <Dashboard
+            userData={userData}
+            setUserData={
+              setUserData as React.Dispatch<React.SetStateAction<UserData>>
+            }
+          />
+        );
     }
   };
 
@@ -78,15 +141,21 @@ const App: React.FC = () => {
     </button>
   );
 
+  if (loading) return <div className="text-center mt-10">Cargando...</div>;
+  if (!user) return <Login onLogin={() => setLoading(true)} />;
+  if (!userData)
+    return <div className="text-center mt-10">Cargando datos...</div>;
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col">
       <main className="flex-grow pt-6 pb-20">
-        {loading ? null :
-          !userData.onboardingComplete ? (
-            <Onboarding setUserData={setUserData} />
-          ) : (
-            renderContent()
-          )}
+        {renderContent()}
+        <button
+          onClick={() => signOut(auth)}
+          className="absolute top-4 right-4 bg-slate-700 text-white px-3 py-1 rounded cursor-pointer hover:bg-red-700"
+        >
+          Cerrar sesión
+        </button>
       </main>
       <footer className="fixed bottom-0 left-0 right-0 bg-slate-800/80 backdrop-blur-sm border-t border-slate-700 shadow-lg z-10">
         <nav

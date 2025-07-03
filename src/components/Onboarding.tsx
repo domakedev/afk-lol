@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { UserData } from "@/types";
 import { ASSESSMENT_QUESTIONS, ICONS } from "@/constants";
+import { saveUserData } from "@/firebaseUserData";
 
 interface OnboardingProps {
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
@@ -48,15 +49,24 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
       return;
     }
     const horasEnMinutos = parseInt(horasPorRecuperar, 10) * 60;
-    setUserData((prev) => ({
-      ...prev,
+    const newUserData: UserData = {
       onboardingComplete: true,
       userName: name,
       assessmentScore: calculateScore(),
       commitment,
       dayZero,
       horasPorRecuperar: horasEnMinutos,
-    }));
+      horasRecuperadas: 0,
+      killStreak: 0,
+      activities: [],
+      goals: [],
+      routines: [],
+      triggers: [],
+      cbtEntries: [],
+      defeats: [],
+    };
+    setUserData(newUserData);
+    saveUserData(newUserData); // <-- Guardar en Firestore inmediatamente
   };
 
   const renderStep = () => {
@@ -68,8 +78,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ setUserData }) => {
               Bienvenido/a a LOL AFK
             </h1>
             <p className="text-lg text-slate-300 mb-8">
-              Hoy inicias un camino de cambio real. No estás solo/a: cada paso, por
-              pequeño que sea, es una victoria. ¡Vamos juntos!
+              Hoy inicias un camino de cambio real. No estás solo/a: cada paso,
+              por pequeño que sea, es una victoria. ¡Vamos juntos!
             </p>
             <button
               onClick={handleNext}
