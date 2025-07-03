@@ -204,7 +204,7 @@ const ReinforcementOverlay: React.FC<{
 
   return (
     <div
-      className="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 p-4 text-center"
+      className="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 p-4 text-center min-h-full"
       onClick={showClose ? onClose : undefined}
     >
       {message && (
@@ -263,9 +263,14 @@ const DetailModal: React.FC<{
   );
 };
 
+// Solución: Extiende el tipo UserData localmente para incluir lastStreakDate
+// y corrige el warning de dependencias en useEffect
+
+type UserDataWithStreak = UserData & { lastStreakDate?: string };
+
 const Dashboard: React.FC<{
-  userData: UserData;
-  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  userData: UserDataWithStreak;
+  setUserData: React.Dispatch<React.SetStateAction<UserDataWithStreak>>;
 }> = ({ userData, setUserData }) => {
   const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("");
@@ -425,6 +430,30 @@ const Dashboard: React.FC<{
     });
   };
 
+  // Reinicio de racha diaria
+  useEffect(() => {
+    if (!userData.lastStreakDate) return;
+    const today = new Date();
+    const todayStr = today.toLocaleDateString("es-ES");
+    if (userData.lastStreakDate !== todayStr && userData.killStreak > 0) {
+      setUserData((prev) => ({
+        ...prev,
+        killStreak: 0,
+        lastStreakDate: todayStr,
+      }));
+    }
+  }, [userData.lastStreakDate, userData.killStreak, setUserData]);
+
+  // Asegura que lastStreakDate exista en userData
+  React.useEffect(() => {
+    if (userData.lastStreakDate === undefined) {
+      setUserData((prev) => ({
+        ...prev,
+        lastStreakDate: new Date().toLocaleDateString("es-ES"),
+      }));
+    }
+  }, [userData.lastStreakDate, setUserData]);
+
   const handleClaimVictory = () => {
     const h = parseInt(hours || "0", 10);
     const m = parseInt(minutes || "0", 10);
@@ -458,8 +487,8 @@ const Dashboard: React.FC<{
     setUserData((prev) => ({
       ...prev,
       horasRecuperadas: newTotalRecuperadas,
-      // horasPorRecuperar ya no disminuye al reclamar victoria
       killStreak: newKillStreak,
+      lastStreakDate: new Date().toLocaleDateString("es-ES"),
       activities: [newEntry, ...prev.activities].slice(0, 50),
     }));
 
@@ -716,30 +745,93 @@ const Dashboard: React.FC<{
       </div>
 
       <div className="text-center text-amber-300 text-sm font-semibold -mt-1 mb-4">
-        {(() => {
-          const nextMilestones = [
-            { n: 1, label: "Primera Sangre" },
-            { n: 2, label: "Doble kill" },
-            { n: 3, label: "Triple-kill" },
-            { n: 4, label: "Quadra-kill" },
-            { n: 5, label: "Penta-kill (¡Victoria!)" },
-            { n: 6, label: "Imparable" },
-            { n: 7, label: "Racha de Dios" },
-            { n: 8, label: "Legendario" },
-          ];
-          const current = userData.killStreak;
-          const next = nextMilestones.find((m) => m.n > current);
-          if (next) {
-            const tareasRestantes = next.n - current;
-            return `Obtendrás el logro de ${next.label.toUpperCase()} al completar ${tareasRestantes} tarea${
-              tareasRestantes > 1 ? "s" : ""
-            } más${next.n === 5 ? " (¡Victoria!)" : ""}.`;
-          } else {
-            return `¡Sigue sumando racha! Próximo logro: ${
-              current + 1
-            } tareas seguidas.`;
+        <div className="mb-2 text-base text-amber-300 font-bold">
+          Reclama victorias para desbloquear logros cada día
+        </div>
+        <div className="flex flex-wrap justify-center gap-2 mt-2">
+          {Object.entries({
+            0: "Nuevo inicio",
+            1: "Primera Sangre",
+            2: "Doble kill",
+            3: "Triple-kill",
+            4: "Quadra-kill",
+            5: "Penta-kill",
+            6: "Imparable",
+            7: "Racha de Dios",
+            8: "Legendario",
+          }).map(([key, label]) => {
+            const unlocked = userData.killStreak >= Number(key);
+            // Gradientes únicos por logro, amarillo oscuro para el primero
+            const gradients = [
+              "linear-gradient(270deg,#14b8a6,#06b6d4,#6366f1,#14b8a6)", // 2: teal-azul
+              "linear-gradient(270deg,#ef4444,#f97316,#ea580c,#ef4444)", // 1: rojo-naranja
+              "linear-gradient(270deg,#f59e0b,#b45309,#f59e0b,#b45309)", // 0: amarillo oscuro
+              "linear-gradient(270deg,#6366f1,#a21caf,#f472b6,#6366f1)", // 3: violeta-rosa
+              "linear-gradient(270deg,#f97316,#ea580c,#be185d,#f97316)", // 4: naranja-rosa fuerte
+              "linear-gradient(270deg,#f43f5e,#be185d,#7c3aed,#f43f5e)", // 5: rojo-violeta
+              "linear-gradient(270deg,#22d3ee,#818cf8,#f472b6,#22d3ee)", // 6: cyan-violeta-rosa
+              "linear-gradient(270deg,#22c55e,#0ea5e9,#6366f1,#22c55e)", // 7: verde-azul-violeta
+              "linear-gradient(270deg,#6366f1,#14b8a6,#22d3ee,#f43f5e,#6366f1)", // 8: multicolor sin amarillo claro
+            ];
+            // Shadows a juego con el fondo
+            const shadows = [
+              "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #6366f160", // 2: teal-azul
+              "0 2px 8px 0 #ef4444a0, 0 8px 32px 0 #f9731660", // 1: rojo-naranja
+              "0 2px 8px 0 #b45309a0, 0 8px 32px 0 #f59e0b60", // 0: amarillo oscuro
+              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #a21caf60", // 3: violeta-rosa
+              "0 2px 8px 0 #be185da0, 0 8px 32px 0 #f9731660", // 4: naranja-rosa fuerte
+              "0 2px 8px 0 #f43f5ea0, 0 8px 32px 0 #7c3aed60", // 5: rojo-violeta
+              "0 2px 8px 0 #22d3eea0, 0 8px 32px 0 #818cf860", // 6: cyan-violeta
+              "0 2px 8px 0 #22c55ea0, 0 8px 32px 0 #0ea5e960", // 7: verde-azul
+              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #f43f5e60", // 8: multicolor
+            ];
+            const pillBg = unlocked
+              ? gradients[Number(key)]
+              : "linear-gradient(90deg,#475569 0%,#1e293b 100%)";
+            const pillShadow = unlocked
+              ? shadows[Number(key)]
+              : "0 2px 8px 0 #334155a0, 0 8px 32px 0 #1e293b60";
+            return (
+              <span
+                key={key}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md
+                  ${
+                    unlocked
+                      ? "animate-gradient-move border-transparent text-white"
+                      : "border-slate-500 text-slate-300 opacity-60"
+                  }
+                `}
+                style={{
+                  minWidth: 90,
+                  background: pillBg,
+                  backgroundSize: unlocked ? "400% 400%" : undefined,
+                  borderColor: unlocked ? "transparent" : "#64748b",
+                  boxShadow: pillShadow,
+                }}
+              >
+                {label}
+              </span>
+            );
+          })}
+        </div>
+        <style jsx>{`
+          @keyframes gradientMove {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
           }
-        })()}
+          .animate-gradient-move {
+            animation: gradientMove 3.5s ease-in-out infinite;
+            background-size: 400% 400% !important;
+            background-clip: padding-box;
+          }
+        `}</style>
       </div>
 
       {/* Nuevos indicadores de victorias y derrotas */}
