@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.lol-afk.com"),
+  metadataBase: new URL("https://afk-lol.vercel.app/"),
   title: {
     default:
       "LOL AFK - Recupera tu Vida y Deja la Adicción a League of Legends",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     title: "LOL AFK - Recupera tu Vida",
     description:
       "La herramienta definitiva para dejar League of Legends y reconstruir tus hábitos.",
-    url: "https://www.lol-afk.com",
+    url: "https://afk-lol.vercel.app/",
     siteName: "LOL AFK",
     images: [
       {
