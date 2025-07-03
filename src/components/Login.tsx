@@ -5,8 +5,15 @@ import {
 } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase";
+import { FaArrowLeft } from "react-icons/fa";
 
-export default function Login({ onLogin }: { onLogin: () => void }) {
+export default function Login({
+  onLogin,
+  onCancel,
+}: {
+  onLogin: () => void;
+  onCancel?: () => void;
+}) {
   const {
     register: formRegister,
     handleSubmit,
@@ -43,8 +50,18 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900">
-      <div className="w-full max-w-sm bg-slate-800/80 rounded-2xl shadow-2xl border border-slate-700 p-8 flex flex-col gap-6 animate-fade-in-scale">
+    <div className="min-h-screen flex items-center justify-center bg-slate-900 relative">
+      {typeof onCancel === "function" && (
+        <button
+          onClick={onCancel}
+          className="fixed left-6 top-6 flex items-center gap-2 bg-slate-800/90 border border-slate-700 text-teal-400 hover:bg-slate-700 hover:text-white font-bold text-base px-5 py-2 rounded-full shadow-lg transition-all duration-200 z-50 backdrop-blur cursor-pointer"
+          type="button"
+        >
+          <FaArrowLeft />
+          <span className="tracking-tight">Volver</span>
+        </button>
+      )}
+      <div className="w-full max-w-sm bg-slate-800/80 rounded-2xl shadow-2xl border border-slate-700 p-8 flex flex-col gap-6 animate-fade-in-scale relative">
         <h1 className="text-2xl font-bold text-center text-teal-400 mb-2 drop-shadow">
           Iniciar sesión
         </h1>
@@ -99,7 +116,9 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
             )}
           </div>
           {error && (
-            <div className="text-red-400 text-center text-sm -mt-2">{error}</div>
+            <div className="text-red-400 text-center text-sm -mt-2">
+              {error}
+            </div>
           )}
           <button
             type="submit"
@@ -108,7 +127,6 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
           >
             {isSubmitting ? "Entrando..." : "Iniciar sesión"}
           </button>
-        </form>
         <div className="flex flex-col gap-2 mt-2">
           <button
             onClick={handleSubmit(onRegister)}
@@ -118,6 +136,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
             {isSubmitting ? "Registrando..." : "Registrarse"}
           </button>
         </div>
+        </form>
       </div>
     </div>
   );

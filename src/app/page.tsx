@@ -11,6 +11,7 @@ import Reconstruction from "../components/reconstruccion/page";
 import Education from "./educacion/page";
 import Onboarding from "@/components/Onboarding";
 import Login from "../components/Login";
+import LandingPage from "@/components/LandingPage";
 import { loadUserData, saveUserData } from "../firebaseUserData";
 
 const App: React.FC = () => {
@@ -18,6 +19,7 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(
@@ -142,7 +144,12 @@ const App: React.FC = () => {
   );
 
   if (loading) return <div className="text-center mt-10">Cargando...</div>;
-  if (!user) return <Login onLogin={() => setLoading(true)} />;
+  if (!user) {
+    if (showLogin) {
+      return <Login onLogin={() => setLoading(true)} onCancel={() => setShowLogin(false)} />;
+    }
+    return <LandingPage onLoginClick={() => setShowLogin(true)} />;
+  }
   if (!userData)
     return <div className="text-center mt-10">Cargando datos...</div>;
 
@@ -151,7 +158,10 @@ const App: React.FC = () => {
       <main className="flex-grow pt-6 pb-20">
         {renderContent()}
         <button
-          onClick={() => signOut(auth)}
+          onClick={() => {
+            signOut(auth);
+            setShowLogin(false);
+          }}
           className="absolute top-4 right-4 bg-slate-700 text-white px-3 py-1 rounded cursor-pointer hover:bg-red-700"
         >
           Cerrar sesión
