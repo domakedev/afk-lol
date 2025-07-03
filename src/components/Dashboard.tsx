@@ -104,16 +104,33 @@ const speak = async (
   });
 };
 
+// StatCard ahora acepta children para contenido extra debajo del valor
 const StatCard: React.FC<{
   title: string;
   value: string | number;
   subValue?: string;
   color: string;
-}> = ({ title, value, subValue, color }) => (
-  <div className={`bg-slate-800 p-4 rounded-lg shadow-md text-center`}>
-    <p className="text-sm text-slate-400">{title}</p>
-    <p className={`text-4xl font-bold ${color}`}>{value}</p>
-    {subValue && <p className="text-xs text-slate-500">{subValue}</p>}
+  children?: React.ReactNode;
+  topButton?: React.ReactNode;
+  bottomButton?: React.ReactNode;
+}> = ({ title, value, subValue, color, children, topButton, bottomButton }) => (
+  <div className="bg-slate-800 p-4 rounded-lg shadow-md text-center relative flex flex-col justify-between py-6">
+    {topButton && (
+      <div className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 z-10 cursor-pointer">
+        {topButton}
+      </div>
+    )}
+    <div>
+      <p className="text-sm text-slate-400">{title}</p>
+      <p className={`text-4xl font-bold ${color}`}>{value}</p>
+      {subValue && <p className="text-xs text-slate-500">{subValue}</p>}
+      {children}
+    </div>
+    {bottomButton && (
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 z-10">
+        {bottomButton}
+      </div>
+    )}
   </div>
 );
 
@@ -233,6 +250,10 @@ const Dashboard: React.FC<{
     "ARAM" | "TFT" | "Ranked" | "Normales"
   >("Ranked");
   const [defeatError, setDefeatError] = useState("");
+
+  const [showHorasModal, setShowHorasModal] = useState(false);
+  const [horasInput, setHorasInput] = useState("");
+  const [horasError, setHorasError] = useState("");
 
   const daysAfk = useMemo(() => {
     if (!userData.dayZero) return 0;
@@ -455,7 +476,10 @@ const Dashboard: React.FC<{
         </div>
       )}
       {showVictoryFlash && (
-        <div className="fixed inset-0 pointer-events-none z-50 animate-victory-flash" style={{ width: "100vw", height: "100vh" }}></div>
+        <div
+          className="fixed inset-0 pointer-events-none z-50 animate-victory-flash"
+          style={{ width: "100vw", height: "100vh" }}
+        ></div>
       )}
       {showVictoryText && (
         <div className="victory-text-overlay">
@@ -484,12 +508,88 @@ const Dashboard: React.FC<{
           value={formatMinutes(userData.horasRecuperadas).display}
           color="text-indigo-400"
         />
-        <StatCard
-          title="Horas totales a recuperar"
-          value={formatMinutes(userData.horasPorRecuperar).display}
-          subValue="meta"
-          color="text-amber-400"
-        />
+        <div className="relative">
+          <StatCard
+            title="Horas totales a recuperar"
+            value={formatMinutes(userData.horasPorRecuperar).display}
+            color="text-amber-400"
+            topButton={
+              <button
+                className="text-xs px-4 py-1 rounded bg-amber-500/90 hover:bg-amber-600 cursor-pointer text-white font-bold focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-lg"
+                onClick={() => {
+                  setHorasInput(
+                    Math.floor(userData.horasPorRecuperar / 60).toString()
+                  );
+                  setHorasError("");
+                  setShowHorasModal(true);
+                }}
+                title="Actualizar valor manualmente"
+                style={{ minWidth: 90 }}
+              >
+                Actualizar
+              </button>
+            }
+            bottomButton={
+              <a
+                href="https://lolvalue.com/wasted-time-lol"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs px-4 py-1 rounded bg-slate-700 hover:bg-slate-800 text-amber-200 font-bold focus:outline-none focus:ring-2 focus:ring-amber-400 shadow-lg"
+                title="Ir a lolvalue.com"
+                style={{ minWidth: 90 }}
+              >
+                Ver horas
+              </a>
+            }
+          />
+          {showHorasModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+              <div className="bg-slate-800 rounded-lg shadow-xl p-6 w-80 flex flex-col items-center animate-fade-in-scale border border-amber-400">
+                <h3 className="text-lg font-bold text-amber-400 mb-2">
+                  Actualizar horas a recuperar
+                </h3>
+                <input
+                  type="number"
+                  min="0"
+                  value={horasInput}
+                  onChange={(e) =>
+                    setHorasInput(e.target.value.replace(/[^0-9]/g, ""))
+                  }
+                  className="w-full p-2 mb-2 rounded bg-slate-900 border border-amber-400 text-center text-lg text-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  placeholder="Horas (ej: 120)"
+                />
+                {horasError && (
+                  <p className="text-red-400 text-xs mb-2">{horasError}</p>
+                )}
+                <div className="flex gap-2 w-full mt-2">
+                  <button
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded"
+                    onClick={() => {
+                      const horas = parseInt(horasInput, 10);
+                      if (isNaN(horas) || horas < 0) {
+                        setHorasError("Introduce un número válido de horas");
+                        return;
+                      }
+                      setUserData((prev) => ({
+                        ...prev,
+                        horasPorRecuperar: horas * 60,
+                      }));
+                      setShowHorasModal(false);
+                    }}
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    className="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 rounded"
+                    onClick={() => setShowHorasModal(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="text-center text-amber-300 text-sm font-semibold -mt-2 mb-4">
@@ -512,7 +612,7 @@ const Dashboard: React.FC<{
               tareasRestantes > 1 ? "s" : ""
             } más${next.n === 5 ? " (¡Victoria!)" : ""}.`;
           } else {
-            return `¡Sigue sumando racha! Próximo hito: ${
+            return `¡Sigue sumando racha! Próximo logro: ${
               current + 1
             } tareas seguidas.`;
           }
