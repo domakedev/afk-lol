@@ -3,6 +3,7 @@ export interface ActivityEntry {
   date: string;
   description: string;
   timeSpent: number; // in minutes
+  feeling: string; // Nuevo campo: ¿Cómo te sientes?
 }
 
 export interface Goal {
@@ -45,6 +46,7 @@ export interface DefeatEntry {
   date: string;
   gameMode: 'ARAM' | 'TFT' | 'Ranked' | 'Normales';
   timeLost: number; // in minutes
+  feeling: string; // Nuevo campo: ¿Cómo te sientes?
 }
 
 export interface UserData {

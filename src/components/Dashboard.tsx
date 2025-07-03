@@ -270,6 +270,7 @@ const Dashboard: React.FC<{
   const [activity, setActivity] = useState("");
   const [hours, setHours] = useState("");
   const [minutes, setMinutes] = useState("");
+  const [activityFeeling, setActivityFeeling] = useState(""); // Nuevo estado para sentimiento
   const [error, setError] = useState("");
   const [visualEffect, setVisualEffect] = useState<string | null>(null);
   const [showReinforcement, setShowReinforcement] = useState(false);
@@ -280,6 +281,7 @@ const Dashboard: React.FC<{
   const [actionTab, setActionTab] = useState<"victory" | "defeat">("victory");
   const [lostHours, setLostHours] = useState("");
   const [lostMinutes, setLostMinutes] = useState("");
+  const [defeatFeeling, setDefeatFeeling] = useState(""); // Nuevo estado para sentimiento derrota
   const [gameMode, setGameMode] = useState<
     "ARAM" | "TFT" | "Ranked" | "Normales"
   >("Ranked");
@@ -430,6 +432,10 @@ const Dashboard: React.FC<{
       setError("El tiempo introducido no es válido.");
       return;
     }
+    if (!activityFeeling.trim()) {
+      setError("¿Cómo te sientes? es obligatorio.");
+      return;
+    }
     setError("");
 
     const timeSpent = h * 60 + m;
@@ -438,6 +444,7 @@ const Dashboard: React.FC<{
       date: new Date().toLocaleDateString("es-ES"),
       description: activity,
       timeSpent,
+      feeling: activityFeeling,
     };
 
     const oldTotalRecuperadas = userData.horasRecuperadas;
@@ -499,6 +506,7 @@ const Dashboard: React.FC<{
     setActivity("");
     setHours("");
     setMinutes("");
+    setActivityFeeling("");
   };
 
   const handleRegisterDefeat = () => {
@@ -512,6 +520,10 @@ const Dashboard: React.FC<{
       setDefeatError("El tiempo introducido no es válido.");
       return;
     }
+    if (!defeatFeeling.trim()) {
+      setDefeatError("¿Cómo te sientes? es obligatorio.");
+      return;
+    }
     setDefeatError("");
 
     const timeLost = h * 60 + m;
@@ -520,6 +532,7 @@ const Dashboard: React.FC<{
       date: new Date().toLocaleDateString("es-ES"),
       gameMode,
       timeLost,
+      feeling: defeatFeeling,
     };
 
     const oldKillStreak = userData.killStreak;
@@ -545,6 +558,7 @@ const Dashboard: React.FC<{
 
     setLostHours("");
     setLostMinutes("");
+    setDefeatFeeling("");
   };
 
   return (
@@ -758,6 +772,9 @@ const Dashboard: React.FC<{
               <div>
                 <p className="text-slate-200">{entry.description}</p>
                 <p className="text-xs text-slate-500">{entry.date}</p>
+                <p className="text-xs text-teal-300 mt-1 italic">
+                  Sentimiento: {entry.feeling}
+                </p>
               </div>
               <span className="font-semibold text-teal-400">
                 {formatMinutes(entry.timeSpent).display}
@@ -784,6 +801,9 @@ const Dashboard: React.FC<{
               <div>
                 <p className="text-slate-200">Partida: {entry.gameMode}</p>
                 <p className="text-xs text-slate-500">{entry.date}</p>
+                <p className="text-xs text-red-300 mt-1 italic">
+                  Sentimiento: {entry.feeling}
+                </p>
               </div>
               <span className="font-semibold text-red-400">
                 -{formatMinutes(entry.timeLost).display}
@@ -834,6 +854,13 @@ const Dashboard: React.FC<{
               value={activity}
               onChange={(e) => setActivity(e.target.value)}
               placeholder="¿En qué invertiste tu tiempo?"
+              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              value={activityFeeling}
+              onChange={(e) => setActivityFeeling(e.target.value)}
+              placeholder="¿Cómo te sientes?"
               className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
             />
             <div className="flex items-center gap-4">
@@ -888,6 +915,13 @@ const Dashboard: React.FC<{
               <option value="ARAM">ARAM</option>
               <option value="TFT">TFT</option>
             </select>
+            <input
+              type="text"
+              value={defeatFeeling}
+              onChange={(e) => setDefeatFeeling(e.target.value)}
+              placeholder="¿Cómo te sientes?"
+              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+            />
             <div className="flex items-center gap-4">
               <input
                 type="number"
