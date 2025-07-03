@@ -239,8 +239,14 @@ const DetailModal: React.FC<{
 }> = ({ open, onClose, title, children }) => {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fade-in-scale min-h-full">
-      <div className="bg-slate-900 rounded-xl shadow-2xl p-6 max-w-md w-full relative border-2 border-teal-400 mx-8">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-fade-in-scale min-h-full"
+      onClick={onClose} // Permite cerrar al hacer clic fuera
+    >
+      <div
+        className="bg-slate-900 rounded-xl shadow-2xl p-6 max-w-md w-full relative border-2 border-teal-400 mx-8"
+        onClick={(e) => e.stopPropagation()} // Evita que el clic dentro cierre el modal
+      >
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-slate-400 hover:text-teal-400 text-2xl font-bold focus:outline-none"
@@ -308,20 +314,24 @@ const Dashboard: React.FC<{
         outline: "none",
         border: "none",
         cursor: "pointer",
-        padding: 0, // Sin padding extra, cuadrado puro
-        borderRadius: "1rem", // Consistente con el resto de la app
+        padding: 0,
+        borderRadius: "1rem",
         color: "white",
         fontWeight: "bold",
         textShadow: "0px 2px 8px rgba(0,0,0,0.25)",
         letterSpacing: "0.01em",
         transition: "all 0.12s cubic-bezier(.4,2,.6,1)",
+
+        // --- Lógica condicional para los colores ---
         background: color.includes("teal")
           ? "linear-gradient(135deg, #14b8a6 70%, #0f766e 100%)"
           : color.includes("red")
           ? "linear-gradient(135deg, #dc2626 70%, #991b1b 100%)"
           : "linear-gradient(135deg, #404040 70%, #18181b 100%)",
+
         boxShadow: color.includes("teal")
-          ? "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #0f766e60, 0 1.5px 0 #0d9488"
+          ? // 1. Brillo superior | 2. Borde 3D | 3. Sombra de ambiente
+            "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #0f766e60, 0 1.5px 0 #0d9488"
           : color.includes("red")
           ? "0 2px 8px 0 #dc2626a0, 0 8px 32px 0 #991b1b60, 0 1.5px 0 #b91c1c"
           : "0 2px 8px 0 #404040a0, 0 8px 32px 0 #18181b60, 0 1.5px 0 #18181b",
@@ -590,14 +600,14 @@ const Dashboard: React.FC<{
         ¡Hola, {userData.userName}!
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         <StatCard title="Días 'AFK'" value={daysAfk} color="text-teal-400" />
         <StatCard
           title="Horas Recuperadas"
           value={formatMinutes(userData.horasRecuperadas).display}
           color="text-indigo-400"
         />
-        <div className="relative">
+        <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
           <StatCard
             title="Horas totales a recuperar"
             value={formatMinutes(userData.horasPorRecuperar).display}
@@ -632,8 +642,14 @@ const Dashboard: React.FC<{
             }
           />
           {showHorasModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-              <div className="bg-slate-800 rounded-lg shadow-xl p-6 w-80 flex flex-col items-center animate-fade-in-scale border border-amber-400">
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+              onClick={() => setShowHorasModal(false)} // Permite cerrar al hacer clic fuera
+            >
+              <div
+                className="bg-slate-800 rounded-lg shadow-xl p-6 w-80 flex flex-col items-center animate-fade-in-scale border border-amber-400"
+                onClick={(e) => e.stopPropagation()} // Evita que el clic dentro cierre el modal
+              >
                 <h3 className="text-lg font-bold text-amber-400 mb-2">
                   Actualizar horas a recuperar
                 </h3>
