@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {  Goal, Routine } from "@/types";
 import { ICONS } from "@/constants";
 import { useUserStore } from "../../store/userStore";
+import { saveUserData } from "@/firebaseUserData";
 
 const Reconstruction: React.FC = () => {
   const userData = useUserStore((state) => state.userData)!;
@@ -73,6 +74,13 @@ const Reconstruction: React.FC = () => {
     setRoutineText("");
     setRoutineTime("");
   };
+
+  // Persistencia automática en Firebase
+  React.useEffect(() => {
+    if (userData) {
+      saveUserData(userData);
+    }
+  }, [userData]);
 
   const renderView = () => {
     switch (activeView) {

@@ -275,6 +275,7 @@ const Dashboard = () => {
   const userData = useUserStore(
     (state) => state.userData
   ) as UserDataWithStreak;
+  console.log("🚀 ~ Dashboard ~ userData:", userData.killStreak)
   const isGuest = useUserStore((state) => state.isGuest);
   const updateUserData = useUserStore((state) => state.updateUserData);
   const [activity, setActivity] = useState("");
@@ -492,7 +493,7 @@ const Dashboard = () => {
     updateUserData({
       horasRecuperadas: newTotalRecuperadas,
       killStreak: newKillStreak,
-      // lastStreakDate: new Date().toLocaleDateString("es-ES"), // Elimina lastStreakDate de los updates directos
+      lastStreakDate: new Date().toLocaleDateString("es-ES"), // <-- Actualiza la fecha de la racha
       activities: [newEntry, ...userData.activities].slice(0, 50),
     });
 
@@ -789,6 +790,7 @@ const Dashboard = () => {
             7: "Racha de Dios",
             8: "Legendario",
           }).map(([key, label]) => {
+            // Desbloqueo por racha actual (killStreak)
             const unlocked = userData.killStreak >= Number(key);
             // Gradientes únicos por logro, amarillo oscuro para el primero
             const gradients = [

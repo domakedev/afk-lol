@@ -4,6 +4,7 @@ import { TriggerEntry, CbtEntry } from "@/types";
 import { ICONS } from "@/constants";
 import { useUserStore } from "../../store/userStore";
 import type { UserData } from "@/types";
+import { saveUserData } from "@/firebaseUserData";
 
 const Toolkit: React.FC = () => {
   // Forzamos el tipado de userData como UserData | undefined
@@ -420,6 +421,13 @@ const Toolkit: React.FC = () => {
       </div>
     </div>
   );
+
+  // Persistencia automática en Firebase
+  useEffect(() => {
+    if (userData) {
+      saveUserData(userData);
+    }
+  }, [userData]);
 
   return (
     <div className="p-4 space-y-6">
