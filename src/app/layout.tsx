@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
+import { GoogleTagManager } from '@next/third-parties/google'
+
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://afk-lol.vercel.app/"),
@@ -65,6 +67,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <GoogleTagManager gtmId="AW-967148300" />
       <body className="bg-slate-900 text-white min-h-screen font-sans flex flex-col">
         <Navbar />
         <main className="flex-1 bg-red-x flex">{children}</main>
