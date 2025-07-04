@@ -1,18 +1,34 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useUserStore } from "../store/userStore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function LandingPage() {
   const [hovered, setHovered] = useState<"login" | "register" | "guest" | null>(
     null
   );
   const [loading, setLoading] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const setIsGuest = useUserStore((state) => state.setIsGuest);
   const userData = useUserStore((state) => state.userData);
   const isGuest = useUserStore((state) => state.isGuest);
+
+  useEffect(() => {
+    // Escucha cambios de sesión y actualiza el flag cuando Firebase responde
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+      if (user) {
+        setAuthChecked(false);
+      } else {
+        setAuthChecked(true);
+      }
+      // Si hay usuario, también puedes actualizar el store aquí si lo deseas
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleGuestLogin = async () => {
     setLoading(true);
@@ -93,7 +109,8 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-          {!(userData || isGuest) && (
+          {/* El botón solo se renderiza si ya se chequeó el auth y no hay usuario ni invitado */}
+          {authChecked && !userData && !isGuest && (
             <button
               type="button"
               onClick={handleGuestLogin}
