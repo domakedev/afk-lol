@@ -17,7 +17,14 @@ export async function saveUserData(userData: UserData) {
   }
 }
 
+//funcion que dice si existe autenticacion de usuario
+export function isUserAuthenticated(): boolean {
+  return auth.currentUser;  
+}
+
 export async function loadUserData(): Promise<UserData> {
+  console.log("🚀 ~ loadUserData ~ auth.currentUser:", auth.currentUser)
+
   if (!auth.currentUser) throw new Error("No user authenticated");
   const userRef = doc(db, "users", auth.currentUser.uid);
   try {

@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import {
   signInWithEmailAndPassword,
@@ -8,14 +9,10 @@ import {
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase";
 import { FaArrowLeft } from "react-icons/fa";
+import { useUserStore } from "../store/userStore";
+import { useRouter } from "next/navigation";
 
-export default function Login({
-  onLogin,
-  onCancel,
-}: {
-  onLogin: () => void;
-  onCancel?: () => void;
-}) {
+export default function Login({guestRequestCreateAccount}: {guestRequestCreateAccount?: boolean}) {
   const {
     register: formRegister,
     handleSubmit,
@@ -26,20 +23,29 @@ export default function Login({
   const [error, setError] = useState("");
   const [isSubmittingLogin, setIsSubmittingLogin] = useState(false);
   const [isSubmittingRegister, setIsSubmittingRegister] = useState(false);
+  const { setLoadingUserData } = useUserStore();
+
+  const router = useRouter();
 
   const onSubmit = async (data: { email: string; pass: string }) => {
     setError("");
     clearErrors();
     setIsSubmittingLogin(true);
+    setLoadingUserData(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.pass);
-      onLogin();
+      console.log("🚀 ~ onSubmit ~ data.email, data.pass:", { email: data.email, pass: data.pass });
+      setLoadingUserData(false);
+      
+      router.push("/dashboard");
+      // El store global detectará el login y actualizará el estado
     } catch {
       setError("Usuario o contraseña incorrectos");
       setFormError("email", { type: "manual", message: " " });
       setFormError("pass", { type: "manual", message: " " });
     } finally {
       setIsSubmittingLogin(false);
+      setLoadingUserData(false);
     }
   };
 
@@ -47,41 +53,49 @@ export default function Login({
     setError("");
     clearErrors();
     setIsSubmittingRegister(true);
+    setLoadingUserData(true);
     try {
       if (auth.currentUser && auth.currentUser.isAnonymous) {
         // Vincular cuenta anónima con email
         const credential = EmailAuthProvider.credential(data.email, data.pass);
         await linkWithCredential(auth.currentUser, credential);
+        console.log("Cuenta anónima vinculada con email:", data.email);
+        setLoadingUserData(false);
+        router.push("/dashboard");
       } else {
         await createUserWithEmailAndPassword(auth, data.email, data.pass);
       }
-      onLogin();
+      // El store global detectará el login y actualizará el estado
     } catch {
       setError("No se pudo registrar");
       setFormError("email", { type: "manual", message: " " });
       setFormError("pass", { type: "manual", message: " " });
     } finally {
       setIsSubmittingRegister(false);
+      setLoadingUserData(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 relative">
-      {typeof onCancel === "function" && (
-        <button
-          onClick={onCancel}
-          className="fixed left-6 top-6 flex items-center gap-2 bg-slate-800/90 border border-slate-700 text-teal-400 hover:bg-slate-700 hover:text-white font-bold text-base px-5 py-2 rounded-full shadow-lg transition-all duration-200 z-50 backdrop-blur cursor-pointer"
-          type="button"
-        >
-          <FaArrowLeft />
-          <span className="tracking-tight">Volver</span>
-        </button>
-      )}
+      <button
+        onClick={() => router.back()}
+        className="fixed left-6 top-6 flex items-center gap-2 bg-slate-800/90 border border-slate-700 text-teal-400 hover:bg-slate-700 hover:text-white font-bold text-base px-5 py-2 rounded-full shadow-lg transition-all duration-200 z-50 backdrop-blur cursor-pointer"
+        type="button"
+      >
+        <FaArrowLeft />
+        <span className="tracking-tight">Volver</span>
+      </button>
       <div className="w-full max-w-sm bg-slate-800/80 rounded-2xl shadow-2xl border border-slate-700 p-8 flex flex-col gap-6 animate-fade-in-scale relative">
         <h1 className="text-2xl font-bold text-center text-teal-400 mb-2 drop-shadow">
           Bienvenido
         </h1>
-        <div className="flex flex-col gap-1 text-center"></div>
+        {guestRequestCreateAccount && (
+          <div className="text-center">
+            <p className="text-lg text-amber-400 font-semibold">Invitado</p>
+            <p className="text-base text-slate-300">¡Crea tu cuenta para guardar tu progreso!</p>
+          </div>
+        )}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <input

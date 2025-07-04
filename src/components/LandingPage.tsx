@@ -1,18 +1,33 @@
+"use client"
 import Image from "next/image";
 import React, { useState } from "react";
+import Link from "next/link";
+import { signInAnonymously } from "firebase/auth";
+import { auth } from "@/firebase";
+import { useUserStore } from "../store/userStore";
 
-export default function LandingPage({
-  onLoginClick,
-  onGuestClick,
-}: {
-  onLoginClick: (mode?: "register") => void;
-  onGuestClick: () => void;
-}) {
+export default function LandingPage() {
   const [hovered, setHovered] = useState<"login" | "register" | "guest" | null>(
     null
   );
+  const [loading, setLoading] = useState(false);
+  const setIsGuest = useUserStore((state) => state.setIsGuest);
+
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await signInAnonymously(auth);
+      setIsGuest(true);
+      window.location.href = "/onboarding";
+    } catch {
+      // Manejar error si se desea
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 px-4 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 px-4 relative overflow-hidden py-4">
       {/* Fondo decorativo */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-700/20 rounded-full blur-3xl animate-pulse" />
@@ -77,8 +92,8 @@ export default function LandingPage({
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-          <button
-            onClick={() => onLoginClick()}
+          <Link
+            href="/login"
             onMouseEnter={() => setHovered("login")}
             onMouseLeave={() => setHovered(null)}
             className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-400 hover:to-teal-500 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-400/50 cursor-pointer ${
@@ -86,9 +101,9 @@ export default function LandingPage({
             }`}
           >
             <span className="text-2xl">🔑</span> Iniciar sesión
-          </button>
-          <button
-            onClick={() => onLoginClick("register")}
+          </Link>
+          <Link
+            href="/login?mode=register"
             onMouseEnter={() => setHovered("register")}
             onMouseLeave={() => setHovered(null)}
             className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-white/90 text-teal-700 font-bold py-3 px-8 rounded-lg border-2 border-teal-400 hover:bg-teal-50 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-teal-200 focus:outline-none focus:ring-4 focus:ring-teal-200/50 cursor-pointer ${
@@ -96,21 +111,23 @@ export default function LandingPage({
             }`}
           >
             <span className="text-2xl">📝</span> Registrarse
-          </button>
+          </Link>
           <button
-            onClick={onGuestClick}
+            type="button"
+            onClick={handleGuestLogin}
             onMouseEnter={() => setHovered("guest")}
             onMouseLeave={() => setHovered(null)}
             className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-700 text-white font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-800 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
               hovered === "guest" ? "scale-105 shadow-2xl" : ""
-            }`}
+            } ${loading ? "opacity-60 cursor-wait" : ""}`}
+            disabled={loading}
           >
-            <span className="text-2xl">👤</span> Continuar como invitado
+            <span className="text-2xl">👤</span> {loading ? "Entrando..." : "Continuar como invitado"}
           </button>
         </div>
-        <div className="mt-8 text-xs text-slate-500 text-center">
+        <footer className="mt-8 text-xs text-slate-500 text-center">
           No es solo dejar de jugar, es empezar a ganar en la vida real.
-        </div>
+        </footer>
       </div>
     </div>
   );

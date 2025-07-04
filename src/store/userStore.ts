@@ -6,11 +6,13 @@ interface UserStore {
   userData: UserData | null;
   isGuest: boolean;
   loading: boolean;
+  loadingUserData: boolean;
   setUser: (user: unknown) => void;
   setUserData: (data: UserData | null) => void;
   updateUserData: (data: Partial<UserData>) => void;
   setIsGuest: (isGuest: boolean) => void;
   setLoading: (loading: boolean) => void;
+  setLoadingUserData: (loading: boolean) => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -18,6 +20,7 @@ export const useUserStore = create<UserStore>((set) => ({
   userData: null,
   isGuest: false,
   loading: true,
+  loadingUserData: false,
   setUser: (user: unknown) => set({ user }),
   setUserData: (data: UserData | null) => set({ userData: data }),
   updateUserData: (data: Partial<UserData>) =>
@@ -26,4 +29,5 @@ export const useUserStore = create<UserStore>((set) => ({
     })),
   setIsGuest: (isGuest: boolean) => set({ isGuest }),
   setLoading: (loading: boolean) => set({ loading }),
+  setLoadingUserData: (loading: boolean) => set({ loadingUserData: loading }),
 }));

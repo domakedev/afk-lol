@@ -7,6 +7,8 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { MdOutlineVisibility } from "react-icons/md";
 import { useUserStore } from "../store/userStore";
+import { auth } from "@/firebase";
+import { useRouter } from "next/navigation";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -269,8 +271,10 @@ const DetailModal: React.FC<{
 
 type UserDataWithStreak = UserData & { lastStreakDate?: string };
 
-const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
-  const userData = useUserStore((state) => state.userData) as UserDataWithStreak;
+const Dashboard = () => {
+  const userData = useUserStore(
+    (state) => state.userData
+  ) as UserDataWithStreak;
   const isGuest = useUserStore((state) => state.isGuest);
   const updateUserData = useUserStore((state) => state.updateUserData);
   const [activity, setActivity] = useState("");
@@ -300,6 +304,8 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
   const [showDetail, setShowDetail] = useState<"victorias" | "derrotas" | null>(
     null
   );
+
+  const router = useRouter();
 
   // Indicadores de victorias y derrotas con icono y efecto brillante
   const IndicatorCard: React.FC<{
@@ -368,7 +374,7 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
   );
 
   const daysAfk = useMemo(() => {
-    if (!userData.dayZero) return 0;
+    if (!userData || !userData.dayZero) return 0;
     const parts = userData.dayZero.split("-").map(Number);
     const dayZeroDate = new Date(parts[0], parts[1] - 1, parts[2]);
     const now = new Date();
@@ -376,7 +382,7 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const diffTime = today.getTime() - dayZeroDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  }, [userData.dayZero]);
+  }, [userData]);
 
   const formatMinutes = (totalMinutes: number) => {
     const h = Math.floor(totalMinutes / 60);
@@ -433,7 +439,7 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
 
   // Reinicio de racha diaria
   useEffect(() => {
-    if (!userData.lastStreakDate) return;
+    if (!userData || !userData?.lastStreakDate) return;
     const today = new Date();
     const todayStr = today.toLocaleDateString("es-ES");
     if (userData.lastStreakDate !== todayStr && userData.killStreak > 0) {
@@ -442,16 +448,16 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
         // lastStreakDate: todayStr, // Elimina lastStreakDate de los updates directos
       });
     }
-  }, [userData.lastStreakDate, userData.killStreak, updateUserData]);
+  }, [updateUserData, userData]);
 
   // Asegura que lastStreakDate exista en userData
   React.useEffect(() => {
-    if (userData.lastStreakDate === undefined) {
+    if (!userData || userData.lastStreakDate === undefined) {
       updateUserData({
         lastStreakDate: new Date().toLocaleDateString("es-ES"),
       });
     }
-  }, [userData.lastStreakDate, updateUserData]);
+  }, [userData, updateUserData]);
 
   const handleClaimVictory = () => {
     const h = parseInt(hours || "0", 10);
@@ -593,17 +599,57 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
-      {isGuest && (
-        <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-semibold w-full mb-4 rounded">
-          Estás como invitado.{" "}
-          <span
-            className="underline cursor-pointer"
-            onClick={onShowLogin}
-          >
-            Regístrate para guardar tu progreso de forma más segura.
-          </span>
-        </div>
-      )}
+      {/* Barra superior: izquierda para invitado, derecha para usuario */}
+      <div className="flex justify-between items-center w-full mb-2">
+        {(!userData.email || isGuest) && (
+          <div className="flex gap-2 flex-col items-end">
+            <button
+              onClick={async () => {
+                await auth.signOut();
+                router.push("/");
+              }}
+              className="px-3 py-1 cursor-pointer rounded bg-slate-700 hover:bg-red-500 text-xs text-slate-200 hover:text-white font-bold transition-colors border border-slate-600 hover:border-red-600 shadow-sm w-fit"
+              title="Cerrar sesión"
+            >
+              Cerrar sesión
+            </button>
+            <div className="flex items-center gap-2 bg-yellow-400/20 border border-yellow-400 rounded px-3 py-1 text-yellow-300 font-semibold text-xs shadow-sm animate-pulse">
+              <span className="hidden sm:inline">⚠️</span>
+              <span>
+                Estás usando el modo invitado.{" "}
+                <span className="font-bold text-yellow-200">
+                  ¡Crea una cuenta gratis
+                </span>{" "}
+                para guardar tu progreso y no perder tus datos si cambias de
+                dispositivo!
+              </span>
+              <button
+                className="px-2 py-1 rounded bg-yellow-400 hover:bg-yellow-500 text-xs text-yellow-900 font-bold transition-colors shadow cursor-pointer"
+                onClick={() => router.push("/login")}
+              >
+                Crear cuenta
+              </button>
+            </div>
+          </div>
+        )}
+        {userData.email && !isGuest && (
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="font-semibold text-teal-300 text-sm">
+              {userData.email}
+            </span>
+            <button
+              onClick={async () => {
+                await auth.signOut();
+                router.push("/");
+              }}
+              className="ml-2 px-3 py-1 cursor-pointer rounded bg-slate-700 hover:bg-red-500 text-xs text-slate-200 hover:text-white font-bold transition-colors border border-slate-600 hover:border-red-600 shadow-sm"
+              title="Cerrar sesión"
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+      </div>
       {/* Confetti para pentakill */}
       {visualEffect === "penta-kill" && showVictoryFlash && (
         <Confetti
@@ -652,17 +698,8 @@ const Dashboard: React.FC<{ onShowLogin?: () => void }> = ({ onShowLogin }) => {
       )}
 
       <h1 className="text-3xl font-bold text-slate-100 text-center">
-        ¡Hola, {userData.userName}!
+        ¡Hola, {userData?.userName || (isGuest ? "invitado" : "bienvenido")}!
       </h1>
-      <div className="text-center text-slate-400 text-sm mb-2">
-        {userData.email ? (
-          <>
-            <span className="font-semibold text-teal-300">Correo:</span> {userData.email}
-          </>
-        ) : (
-          <span className="font-semibold text-yellow-500">Invitado</span>
-        )}
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         <StatCard title="Días 'AFK'" value={daysAfk} color="text-teal-400" />

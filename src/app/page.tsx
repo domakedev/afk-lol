@@ -1,203 +1,32 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { onAuthStateChanged, signOut, signInAnonymously } from "firebase/auth";
-import { auth } from "../firebase";
-import { ICONS } from "@/constants";
-import Dashboard from "@/components/Dashboard";
-import ToolkitPage from "../components/toolkit/page";
-import Reconstruction from "../components/reconstruccion/page";
-import Education from "./educacion/page";
-import Onboarding from "@/components/Onboarding";
-import Login from "../components/Login";
-import LandingPage from "@/components/LandingPage";
-import { loadUserData, saveUserData } from "../firebaseUserData";
+"use client"
+import { onAuthStateChanged } from "firebase/auth";
+import LandingPage from "../components/LandingPage";
 import { useUserStore } from "../store/userStore";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { auth } from "@/firebase";
 
-const App: React.FC = () => {
-  const {
-    user,
-    userData,
-    isGuest,
-    loading,
-    setUser,
-    setUserData,
-    setIsGuest,
-    setLoading,
-  } = useUserStore();
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [showLogin, setShowLogin] = useState(false);
+export default function Home() {
+  const { loadingUserData } = useUserStore((state) => state);
+  const router = useRouter();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const unsub = onAuthStateChanged(auth, async (firebaseUser: any) => {
-      setUser(firebaseUser);
-      setIsGuest(firebaseUser?.isAnonymous || false);
-      if (firebaseUser) {
-        const data = await loadUserData();
-        setUserData(
-          data || {
-            onboardingComplete: false,
-            userName: firebaseUser.email || "",
-            dayZero: new Date().toISOString().slice(0, 10),
-            horasRecuperadas: 0,
-            horasPorRecuperar: 0,
-            killStreak: 0,
-            activities: [],
-            defeats: [],
-            commitment: "",
-            goals: [],
-            routines: [],
-            triggers: [],
-            cbtEntries: [],
-            assessmentScore: 0,
-          }
-        );
-      } else {
-        setUserData(null);
-      }
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user: any) => {
+      if (user) {
+        router.push("/dashboard");
+      } 
     });
-    return () => unsub();
-  }, [setUser, setUserData, setIsGuest, setLoading]);
+    return () => unsubscribe();
+  }, [router]);
 
-  useEffect(() => {
-    if (user && userData) saveUserData(userData);
-  }, [userData, user]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [setLoading]);
-
-  // Forzar dashboard al terminar onboarding
-  useEffect(() => {
-    if (userData && userData.onboardingComplete) {
-      setActiveTab("dashboard");
-    }
-  }, [userData]);
-
-  const renderContent = () => {
-    if (!userData) return null;
-    if (!userData.onboardingComplete) {
-      return <Onboarding />;
-    }
-    switch (activeTab) {
-      case "dashboard":
-        return <Dashboard onShowLogin={() => setShowLogin(true)} />;
-      case "toolkit":
-        return <ToolkitPage />;
-      case "reconstruction":
-        return <Reconstruction />;
-      case "education":
-        return <Education />;
-      default:
-        return <Dashboard />;
-    }
-  };
-
-  const NavItem: React.FC<{
-    tabName: string;
-    label: string;
-    icon: React.ReactNode;
-  }> = ({ tabName, label, icon }) => (
-    <button
-      onClick={() => setActiveTab(tabName)}
-      className={`flex flex-col items-center justify-center w-full pt-2 pb-1 text-sm transition-colors duration-200 ${
-        activeTab === tabName
-          ? "text-teal-400"
-          : "text-slate-400 hover:text-teal-300"
-      }`}
-      aria-label={label}
-      aria-current={activeTab === tabName ? "page" : undefined}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
-
-  const handleGuestLogin = async () => {
-    setLoading(true);
-    try {
-      await signInAnonymously(auth);
-      setIsGuest(true);
-    } catch {
-      // Manejar error si se desea
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <div className="text-center mt-10">Cargando...</div>;
-  if (!user) {
-    if (showLogin) {
-      return (
-        <Login
-          onLogin={() => setLoading(true)}
-          onCancel={() => setShowLogin(false)}
-        />
-      );
-    }
+  if (loadingUserData) {
     return (
-      <LandingPage
-        onLoginClick={() => setShowLogin(true)}
-        onGuestClick={handleGuestLogin}
-      />
+      <div className="flex items-center justify-center h-64">
+        <div className="loader ease-linear rounded-full border-8 border-t-8 border-slate-200 h-16 w-16"></div>
+      </div>
     );
   }
-  if (!userData)
-    return <div className="text-center mt-10">Cargando datos...</div>;
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col">
-      {isGuest && (
-        <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-semibold w-full">
-          Estás como invitado.{" "}
-          <span
-            className="underline cursor-pointer"
-            onClick={() => setShowLogin(true)}
-          >
-            Regístrate para guardar tu progreso de forma más segura.
-          </span>
-        </div>
-      )}
-      <main className="flex-grow pt-6 pb-20">
-        {renderContent()}
-        <button
-          onClick={() => {
-            signOut(auth);
-            setShowLogin(false);
-          }}
-          className="absolute top-4 right-4 bg-slate-700 text-white px-3 py-1 rounded cursor-pointer hover:bg-red-700"
-        >
-          Cerrar sesión
-        </button>
-      </main>
-      <footer className="fixed bottom-0 left-0 right-0 bg-slate-800/80 backdrop-blur-sm border-t border-slate-700 shadow-lg z-10">
-        <nav
-          className="flex justify-around max-w-3xl mx-auto"
-          role="navigation"
-          aria-label="Main"
-        >
-          <NavItem tabName="dashboard" label="Panel" icon={ICONS.dashboard} />
-          <NavItem
-            tabName="toolkit"
-            label="Herramientas"
-            icon={ICONS.toolkit}
-          />
-          <NavItem
-            tabName="reconstruction"
-            label="Reconstruir"
-            icon={ICONS.reconstruction}
-          />
-          <NavItem
-            tabName="education"
-            label="Educación"
-            icon={ICONS.education}
-          />
-        </nav>
-      </footer>
-    </div>
-  );
-};
-
-export default App;
+  return <LandingPage />;
+}

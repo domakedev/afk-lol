@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
+import { isUserAuthenticated } from "@/firebaseUserData";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://afk-lol.vercel.app/"),
@@ -62,6 +63,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const asd = isUserAuthenticated();
+  console.log("🚀 ~ asdeeeeeeeeeeee:", asd);
   return (
     <html lang="es">
       <head>

@@ -5,6 +5,7 @@ import { UserData } from "@/types";
 import { ASSESSMENT_QUESTIONS, ICONS } from "@/constants";
 import { saveUserData } from "@/firebaseUserData";
 import { useUserStore } from "../store/userStore";
+import { useRouter } from "next/navigation";
 
 const Onboarding: React.FC = () => {
   const setUserData = useUserStore((state) => state.setUserData);
@@ -16,6 +17,8 @@ const Onboarding: React.FC = () => {
   const [commitment, setCommitment] = useState("");
   const [dayZero, setDayZero] = useState("");
   const [horasPorRecuperar, setHorasPorRecuperar] = useState("");
+
+  const router = useRouter();
 
   const handleNext = () => setStep((s) => s + 1);
   const handlePrev = () => setStep((s) => s - 1);
@@ -66,6 +69,8 @@ const Onboarding: React.FC = () => {
     };
     setUserData(newUserData);
     saveUserData(newUserData); // <-- Guardar en Firestore inmediatamente
+    //evniar a la página de dashboard
+    router.push("/dashboard");
   };
 
   const renderStep = () => {
