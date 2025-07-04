@@ -87,7 +87,7 @@ const Onboarding: React.FC = () => {
             </p>
             <button
               onClick={handleNext}
-              className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-1"
+              className="w-full bg-teal-500 cursor-pointer hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-1"
             >
               Comenzar{ICONS.arrowRight}
             </button>
@@ -198,19 +198,19 @@ const Onboarding: React.FC = () => {
             <div className="flex justify-around mt-4 space-x-2">
               <button
                 onClick={() => setDayZero(getFormattedDate(-1))}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm"
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm cursor-pointer"
               >
                 Inicié Ayer
               </button>
               <button
                 onClick={() => setDayZero(getFormattedDate(0))}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm"
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm cursor-pointer"
               >
                 Hoy
               </button>
               <button
                 onClick={() => setDayZero(getFormattedDate(1))}
-                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm"
+                className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg text-sm cursor-pointer"
               >
                 Mañana
               </button>
@@ -299,7 +299,7 @@ const Onboarding: React.FC = () => {
           {step > 0 ? (
             <button
               onClick={handlePrev}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center"
+              className="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center cursor-pointer"
             >
               {ICONS.arrowLeft} <span className="ml-2">Anterior</span>
             </button>
@@ -311,7 +311,7 @@ const Onboarding: React.FC = () => {
             {step === 2 && (
               <button
                 onClick={handleNext}
-                className="bg-slate-600 hover:bg-slate-500 text-slate-200 font-bold py-2 px-4 rounded-lg"
+                className="bg-slate-600 cursor-pointer hover:bg-slate-500 text-slate-200 font-bold py-2 px-4 rounded-lg"
               >
                 Omitir por ahora
               </button>
@@ -320,7 +320,7 @@ const Onboarding: React.FC = () => {
               <button
                 onClick={handleNext}
                 disabled={isNextDisabled()}
-                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center"
+                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center cursor-pointer"
               >
                 <span className="mr-2">Siguiente</span> {ICONS.arrowRight}
               </button>
@@ -329,7 +329,7 @@ const Onboarding: React.FC = () => {
               <button
                 onClick={handleSubmit}
                 disabled={isNextDisabled()}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center"
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center cursor-pointer"
               >
                 Completar y Empezar {ICONS.check}
               </button>

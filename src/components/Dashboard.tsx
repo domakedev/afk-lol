@@ -224,7 +224,7 @@ const ReinforcementOverlay: React.FC<{
       {showClose && (
         <button
           onClick={onClose}
-          className="mt-8 bg-teal-500/80 text-white font-bold py-2 px-6 rounded-lg animate-fade-in-scale"
+          className="mt-8 bg-teal-500/80 text-white font-bold py-2 px-6 rounded-lg animate-fade-in-scale  cursor-pointer"
         >
           Toca para cerrar
         </button>
@@ -252,7 +252,7 @@ const DetailModal: React.FC<{
       >
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-slate-400 hover:text-teal-400 text-2xl font-bold focus:outline-none"
+          className="absolute top-2 right-2 text-slate-400 hover:text-teal-400 text-2xl font-bold focus:outline-none  cursor-pointer"
           aria-label="Cerrar"
         >
           ×
@@ -317,7 +317,7 @@ const Dashboard = () => {
     label: string; // Nuevo: texto debajo del número
   }> = ({ count, color, onClick, active, label }) => (
     <button
-      className={`relative flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-xl transition-all duration-150 select-none ${color} shadow-xl text-4xl md:text-5xl text-slate-800 focus:outline-none font-bold overflow-hidden
+      className={`relative flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-xl transition-all duration-150 select-none ${color} shadow-xl text-4xl md:text-5xl text-slate-800 focus:outline-none font-bold overflow-hidden cursor-pointer
       ${
         active
           ? "scale-95 shadow-inner"
@@ -960,7 +960,7 @@ const Dashboard = () => {
         <div className="flex border-b border-slate-700 mb-4">
           <button
             onClick={() => setActionTab("victory")}
-            className={`flex-1 py-2 font-bold text-center transition-colors ${
+            className={`flex-1 py-2 font-bold text-center transition-colors cursor-pointer ${
               actionTab === "victory"
                 ? "text-teal-400 border-b-2 border-teal-400"
                 : "text-slate-400"
@@ -970,7 +970,7 @@ const Dashboard = () => {
           </button>
           <button
             onClick={() => setActionTab("defeat")}
-            className={`flex-1 py-2 font-bold text-center transition-colors ${
+            className={`flex-1 py-2 font-bold text-center transition-colors cursor-pointer ${
               actionTab === "defeat"
                 ? "text-red-400 border-b-2 border-red-400"
                 : "text-slate-400"
@@ -1026,7 +1026,7 @@ const Dashboard = () => {
             )}
             <button
               onClick={handleClaimVictory}
-              className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-transform transform hover:scale-105"
+              className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-transform transform hover:scale-105 cursor-pointer"
             >
               {ICONS.plus} <span className="ml-2">RECLAMAR VICTORIA</span>
             </button>
@@ -1085,7 +1085,7 @@ const Dashboard = () => {
             )}
             <button
               onClick={handleRegisterDefeat}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-transform transform hover:scale-105"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center transition-transform transform hover:scale-105 cursor-pointer"
             >
               <span className="font-mono text-lg mr-2">-</span> REGISTRAR
               DERROTA

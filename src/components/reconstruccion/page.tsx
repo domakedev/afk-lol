@@ -126,7 +126,7 @@ const Reconstruction: React.FC = () => {
                 >
                   <span className="font-mono text-teal-400">{r.time}</span>
                   <span className="text-slate-200">{r.text}</span>
-                  <button className="text-slate-500 hover:text-red-500" onClick={() => removeRoutine(r.id)}>
+                  <button className="text-slate-500 hover:text-red-500 cursor-pointer" onClick={() => removeRoutine(r.id)}>
                     {ICONS.close}
                   </button>
                 </div>

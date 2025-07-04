@@ -182,7 +182,7 @@ export default function Navbar() {
       </div>
       {/* Botón hamburguesa solo en móvil, alineado a la derecha */}
       <button
-        className="ml-1 sm:ml-2 flex md:hidden p-2 rounded hover:bg-slate-700 transition-colors z-50"
+        className="ml-1 sm:ml-2 flex md:hidden p-2 rounded hover:bg-slate-700 transition-colors z-50 cursor-pointer"
         onClick={() => setMenuOpen((v) => !v)}
         aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
         style={{ minWidth: 40, minHeight: 40 }}
@@ -218,7 +218,7 @@ export default function Navbar() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute top-3 right-3 text-slate-400 hover:text-white text-2xl"
+              className="absolute top-3 right-3 text-slate-400 hover:text-white text-2xl cursor-pointer"
               onClick={() => setMenuOpen(false)}
               aria-label="Cerrar menú"
             >

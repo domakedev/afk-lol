@@ -127,7 +127,7 @@ const Toolkit: React.FC = () => {
         </p>
         <button
           onClick={() => setShowSOS(false)}
-          className="absolute top-4 right-4 text-white"
+          className="absolute top-4 right-4 text-white cursor-pointer"
         >
           {ICONS.close}
         </button>
@@ -172,13 +172,13 @@ const Toolkit: React.FC = () => {
             <div className="flex justify-between mt-4">
               <button
                 onClick={() => setActiveTool(null)}
-                className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded"
+                className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 onClick={addTrigger}
-                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Guardar
               </button>
@@ -238,13 +238,13 @@ const Toolkit: React.FC = () => {
             <div className="flex justify-between mt-4">
               <button
                 onClick={() => setActiveTool(null)}
-                className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded"
+                className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 onClick={addCbtEntry}
-                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Guardar
               </button>
@@ -445,7 +445,7 @@ const Toolkit: React.FC = () => {
         </h1>
         <button
           onClick={() => setShowSOS(true)}
-          className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-full shadow-lg animate-pulse"
+          className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-full shadow-lg animate-pulse cursor-pointer"
         >
           S.O.S
         </button>
