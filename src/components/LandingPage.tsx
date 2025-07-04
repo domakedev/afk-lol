@@ -63,6 +63,24 @@ export default function LandingPage() {
             AFK LOL
           </h1>
         </div>
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-2">
+          {/* El botón solo se renderiza si ya se chequeó el auth y no hay usuario ni invitado */}
+          {authChecked && !userData && !isGuest && (
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              onMouseEnter={() => setHovered("guest")}
+              onMouseLeave={() => setHovered(null)}
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-100 text-slate-500 font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-200 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
+                hovered === "guest" ? "scale-105 shadow-2xl" : ""
+              } ${loading ? "opacity-60 cursor-wait" : ""}`}
+              disabled={loading}
+            >
+              <span className="text-2xl">🎮</span>{" "}
+              {loading ? "Entrando..." : "Continuar como invitado"}
+            </button>
+          )}
+        </div>
         <h2 className="text-xl text-slate-300 font-semibold text-center mb-4">
           Recupera tu tiempo, mejora tu bienestar y alcanza tus metas fuera del
           juego
@@ -107,24 +125,6 @@ export default function LandingPage() {
               </span>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-          {/* El botón solo se renderiza si ya se chequeó el auth y no hay usuario ni invitado */}
-          {authChecked && !userData && !isGuest && (
-            <button
-              type="button"
-              onClick={handleGuestLogin}
-              onMouseEnter={() => setHovered("guest")}
-              onMouseLeave={() => setHovered(null)}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-100 text-slate-500 font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-200 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
-                hovered === "guest" ? "scale-105 shadow-2xl" : ""
-              } ${loading ? "opacity-60 cursor-wait" : ""}`}
-              disabled={loading}
-            >
-              <span className="text-2xl">🎮</span>{" "}
-              {loading ? "Entrando..." : "Continuar como invitado"}
-            </button>
-          )}
         </div>
         <footer className="mt-8 text-xs text-slate-500 text-center">
           No es solo dejar de jugar, es empezar a ganar en la vida real.
