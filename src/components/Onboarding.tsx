@@ -65,7 +65,7 @@ const Onboarding: React.FC = () => {
       triggers: [],
       cbtEntries: [],
       defeats: [],
-      email: null
+      email: null,
     };
     setUserData(newUserData);
     saveUserData(newUserData); // <-- Guardar en Firestore inmediatamente
@@ -87,9 +87,9 @@ const Onboarding: React.FC = () => {
             </p>
             <button
               onClick={handleNext}
-              className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center"
+              className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-1"
             >
-              Comenzar {ICONS.arrowRight}
+              Comenzar{ICONS.arrowRight}
             </button>
           </div>
         );

@@ -14,14 +14,49 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { loadUserData } from "@/firebaseUserData";
 
 export default function Navbar() {
   const userData = useUserStore((state) => state.userData);
   const isGuest = useUserStore((state) => state.isGuest);
+  const setUser = useUserStore((state) => state.setUser);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const setIsGuest = useUserStore((state) => state.setIsGuest);
+  const setLoading = useUserStore((state) => state.setLoading);
+  const setLoadingUserData = useUserStore((state) => state.setLoadingUserData);
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Sincroniza el store con el usuario de Firebase en tiempo real
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user: unknown) => {
+      setUser(user);
+      if (!user) {
+        setUserData(null);
+        setIsGuest(false);
+      } else {
+        const userData = await loadUserData();
+        setUserData(userData);
+      }
+    });
+    return () => unsubscribe();
+  }, [setUser, setUserData, setIsGuest]);
+
+  // Función reutilizable para cerrar sesión y limpiar el store
+  const handleSignOut = async () => {
+    setLoading(true);
+    setLoadingUserData(true);
+    setUser(null);
+    setUserData(null);
+    setIsGuest(false);
+    await auth.signOut();
+    setLoading(false);
+    setLoadingUserData(false);
+    router.push("/");
+  };
 
   // Mostrar solo el logo como Home si no hay usuario ni invitado
   if (!userData && !isGuest) {
@@ -157,13 +192,10 @@ export default function Navbar() {
       {/* Controles de usuario: solo visibles en desktop, alineados a la derecha */}
       <div className="hidden md:flex items-center gap-3 bg-slate-700/60 px-3 py-1 rounded-full shadow border border-slate-600 text-xs xs:text-sm ml-4">
         <span className="font-semibold text-teal-300 flex items-center gap-1">
-          {userData?.email || (isGuest && "Invitado")}
+          {userData?.email || "Invitado"}
         </span>
         <button
-          onClick={async () => {
-            await auth.signOut();
-            router.push("/");
-          }}
+          onClick={handleSignOut}
           className="px-2 py-1 cursor-pointer rounded bg-red-600 text-xs text-white font-bold transition-all duration-150 hover:bg-red-700 hover:transform hover:scale-105"
           title="Cerrar sesión"
         >
@@ -242,8 +274,7 @@ export default function Navbar() {
               <button
                 onClick={async () => {
                   setMenuOpen(false);
-                  await auth.signOut();
-                  router.push("/");
+                  await handleSignOut();
                 }}
                 className="px-3 py-2 cursor-pointer rounded bg-red-600 text-white font-bold transition-all duration-150 flex items-center gap-2 hover:bg-red-700 hover:transform hover:scale-105"
                 title="Cerrar sesión"

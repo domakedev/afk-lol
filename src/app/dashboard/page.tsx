@@ -22,7 +22,7 @@ const Page = () => {
           const userData = await loadUserData();
           setUserData(userData);
         } catch (err) {
-          console.log("🚀 Error en Dashboard", err)
+          console.log("🚀 Error en Dashboard", err);
           setUserData(null);
           router.push("/login");
         }
@@ -40,10 +40,16 @@ const Page = () => {
         <div className="relative flex items-center justify-center w-20 h-20">
           <span className="absolute inline-block w-20 h-20 rounded-full border-4 border-teal-400 border-t-transparent animate-spin-slow shadow-lg"></span>
           <span className="absolute inline-block w-12 h-12 rounded-full border-2 border-teal-300 border-t-transparent opacity-60 animate-spin shadow-md"></span>
-          <span className="absolute text-teal-400 text-3xl font-bold drop-shadow-lg select-none animate-pulse">AFK</span>
+          <span className="absolute text-teal-400 text-3xl font-bold drop-shadow-lg select-none animate-pulse">
+            AFK
+          </span>
         </div>
       </div>
     );
+  }
+  if (userData && userData.onboardingComplete === false) {
+    router.replace("/onboarding");
+    return null;
   }
   return <Dashboard />;
 };
