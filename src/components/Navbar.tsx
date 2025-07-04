@@ -197,7 +197,7 @@ export default function Navbar() {
         </span>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-pink-600 hover:to-red-700 text-white font-bold shadow-md border border-red-400/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2"
+          className="flex items-center gap-2 px-3 py-1 rounded-full cursor-pointer bg-gradient-to-r from-red-600 to-pink-600 hover:from-pink-600 hover:to-red-700 text-white font-bold shadow-md border border-red-400/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2"
           title="Cerrar sesión"
         >
           <FaSignInAlt className="text-base" />
