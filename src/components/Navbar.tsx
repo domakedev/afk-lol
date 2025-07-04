@@ -111,12 +111,12 @@ export default function Navbar() {
 
   // Responsive: menú hamburguesa en móvil
   return (
-    <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center px-4 py-2 shadow-lg backdrop-blur sticky top-0 left-0">
+    <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center px-2 sm:px-4 py-2 shadow-lg backdrop-blur sticky top-0 left-0 min-h-[56px]">
       {/* Izquierda: logo + enlaces */}
-      <div className="flex items-center gap-2 flex-1 min-w-0">
+      <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
         <Link
           href="/"
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-colors ${
+          className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-colors whitespace-nowrap min-w-0 max-w-full overflow-hidden text-ellipsis ${
             pathname === "/"
               ? "bg-gradient-to-r from-teal-600 to-teal-400 text-white shadow-lg scale-105"
               : ""
@@ -125,19 +125,19 @@ export default function Navbar() {
           <Image
             src="/logo.png"
             alt="AFK LOL"
-            className="w-7 h-7 drop-shadow"
+            className="w-7 h-7 drop-shadow min-w-[28px] min-h-[28px]"
             width={28}
             height={28}
           />
           <span
-            className="font-extrabold tracking-tight text-lg  lg:inline"
+            className="font-extrabold tracking-tight text-lg hidden xs:inline lg:inline"
             style={{ fontFamily: "Russo One, sans-serif" }}
           >
             AFK LOL
           </span>
         </Link>
         {/* Enlaces principales: ocultos en móvil, visibles en md+ */}
-        <div className="hidden md:flex gap-3 items-center">
+        <div className="hidden md:flex gap-2 sm:gap-3 items-center flex-shrink-0">
           <Link
             href="/dashboard"
             className={`px-3 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-all duration-150 flex items-center gap-2 text-sm ${
@@ -183,17 +183,20 @@ export default function Navbar() {
       </div>
       {/* Botón hamburguesa solo en móvil, alineado a la derecha */}
       <button
-        className="ml-2 flex md:hidden p-2 rounded hover:bg-slate-700 transition-colors"
+        className="ml-1 sm:ml-2 flex md:hidden p-2 rounded hover:bg-slate-700 transition-colors z-50"
         onClick={() => setMenuOpen((v) => !v)}
         aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+        style={{ minWidth: 40, minHeight: 40 }}
       >
         {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
       </button>
       {/* Controles de usuario: solo visibles en desktop, alineados a la derecha */}
-      <div className="hidden md:flex items-center gap-4 bg-gradient-to-r from-teal-800/80 to-slate-800/80 px-4 py-1 rounded-full shadow-lg border border-teal-500/40 text-sm ml-4 transition-all duration-200">
-        <span className="font-semibold text-teal-200 flex items-center gap-2 px-2">
-          <FaUserPlus className="text-teal-400 text-lg" />
-          {userData?.email || "Invitado"}
+      <div className="hidden md:flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-teal-800/80 to-slate-800/80 px-2 sm:px-4 py-1 rounded-full shadow-lg border border-teal-500/40 text-sm transition-all duration-200 flex-shrink-0">
+        <span className="hidden [@media(min-width:1140px)]:inline font-semibold text-teal-200 flex items-center gap-2 px-2 whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="flex gap-2">
+            <FaUserPlus className="text-teal-400 text-lg" />
+            {userData?.email || "Invitado"}
+          </span>
         </span>
         <button
           onClick={handleSignOut}
@@ -207,12 +210,12 @@ export default function Navbar() {
       {/* Menú móvil: visible solo si menuOpen y en pantallas pequeñas */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 flex"
+          className="fixed inset-0 z-[999] bg-black/40 flex"
           style={{ top: 0, left: 0, width: "100vw", height: "100vh" }}
           onClick={() => setMenuOpen(false)}
         >
           <aside
-            className="relative h-full w-4/5 max-w-xs bg-slate-900 shadow-2xl flex flex-col gap-2 p-6 animate-slide-in"
+            className="relative h-full w-4/5 max-w-xs bg-slate-900 shadow-2xl flex flex-col gap-2 p-6 animate-slide-in min-w-[220px]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -268,7 +271,7 @@ export default function Navbar() {
             </Link>
             <div className="mt-6 flex flex-col gap-2 border-t border-slate-600 pt-4">
               <span className="font-semibold text-teal-300 flex items-center gap-1">
-                {userData?.email || (isGuest && "Invitado")}
+                <span className="hidden [@media(min-width:1140px)]:inline">{userData?.email || (isGuest && "Invitado")}</span>
               </span>
               <button
                 onClick={async () => {
