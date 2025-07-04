@@ -112,7 +112,7 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center px-2 sm:px-4 py-2 shadow-lg backdrop-blur sticky top-0 left-0 min-h-[56px]">
       {/* Izquierda: logo + enlaces */}
-      <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+      <div className="flex items-center gap-2 flex-1 min-w-0">
         <Link
           href="/"
           className={`flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-colors whitespace-nowrap min-w-0 max-w-full overflow-hidden text-ellipsis ${

@@ -28,7 +28,7 @@ const Education: React.FC = () => {
             </h2>
             <button
               onClick={() => setSelectedArticle(null)}
-              className="text-slate-400 hover:text-white"
+              className="text-slate-400 hover:text-white cursor-pointer"
             >
               {ICONS.close}
             </button>
@@ -42,7 +42,7 @@ const Education: React.FC = () => {
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 min-h-full w-4xl mx-auto">
       <ArticleModal />
       <h1 className="text-3xl font-bold text-slate-100">Conoce a tu Enemigo</h1>
       <p className="text-slate-400">

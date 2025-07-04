@@ -437,7 +437,7 @@ const Toolkit: React.FC = () => {
   }, [userData]);
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 min-h-full mx-auto w-4xl">
       <SOSModal />
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-slate-100">

@@ -5,6 +5,7 @@ import { signInAnonymously } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useUserStore } from "../store/userStore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
   const [hovered, setHovered] = useState<"login" | "register" | "guest" | null>(
@@ -15,6 +16,8 @@ export default function LandingPage() {
   const setIsGuest = useUserStore((state) => state.setIsGuest);
   const userData = useUserStore((state) => state.userData);
   const isGuest = useUserStore((state) => state.isGuest);
+
+  const router = useRouter();
 
   useEffect(() => {
     // Escucha cambios de sesión y actualiza el flag cuando Firebase responde
@@ -35,7 +38,7 @@ export default function LandingPage() {
     try {
       await signInAnonymously(auth);
       setIsGuest(true);
-      window.location.href = "/onboarding";
+      router.push("/onboarding");
     } catch {
       // Manejar error si se desea
     } finally {
@@ -44,7 +47,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 px-4 relative overflow-hidden py-4">
+    <div className="min-h-full min-w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 px-4 relative overflow-hidden py-4">
       {/* Fondo decorativo */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-700/20 rounded-full blur-3xl animate-pulse" />
@@ -133,7 +136,7 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <footer className="mt-8 text-xs text-slate-500 text-center md:text-left">
+      <footer className="sm:absolute sm:bottom-0 pt-4 sm:pb-4 text-xs text-slate-500 text-center md:text-left">
         No es solo dejar de jugar, es empezar a ganar en la vida real.
       </footer>
     </div>

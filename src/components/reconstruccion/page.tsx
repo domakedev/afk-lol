@@ -94,15 +94,6 @@ const Reconstruction: React.FC = () => {
       case "routines":
         return (
           <div>
-            <div className="flex items-center mb-2 justify-end">
-              <button
-                onClick={() => setActiveView("menu")}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
-              >
-                <span className="text-lg">←</span>
-                Volver
-              </button>
-            </div>
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Constructor de Rutinas
             </h3>
@@ -122,7 +113,7 @@ const Reconstruction: React.FC = () => {
               />
               <button
                 onClick={addRoutine}
-                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Añadir a la Rutina
               </button>
@@ -145,16 +136,7 @@ const Reconstruction: React.FC = () => {
         );
       case "goals":
         return (
-          <div>
-            <div className="flex items-center mb-2 justify-end">
-              <button
-                onClick={() => setActiveView("menu")}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
-              >
-                <span className="text-lg">←</span>
-                Volver
-              </button>
-            </div>
+          <div>            
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Establecimiento de Metas (SMART)
             </h3>
@@ -184,7 +166,7 @@ const Reconstruction: React.FC = () => {
               />
               <button
                 onClick={addGoal}
-                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Añadir Meta
               </button>
@@ -226,16 +208,7 @@ const Reconstruction: React.FC = () => {
         );
       case "hobbies":
         return (
-          <div>
-            <div className="flex items-center mb-2 justify-end">
-              <button
-                onClick={() => setActiveView("menu")}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
-              >
-                <span className="text-lg">←</span>
-                Volver
-              </button>
-            </div>
+          <div>           
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Explorador de Hobbies
             </h3>
@@ -253,7 +226,7 @@ const Reconstruction: React.FC = () => {
                     hobbies[Math.floor(Math.random() * hobbies.length)]
                   )
                 }
-                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >
                 Sugerir Otro
               </button>
@@ -310,16 +283,17 @@ const Reconstruction: React.FC = () => {
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 min-h-full w-4xl mx-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-slate-100">Reconstrucción</h1>
         {activeView !== "menu" && (
-          <button
-            onClick={() => setActiveView("menu")}
-            className="text-teal-400 hover:text-teal-300"
-          >
-            Volver
-          </button>
+        <button
+          onClick={() => setActiveView("menu")}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
+        >
+          <span className="text-lg">←</span>
+          Volver
+        </button>
         )}
       </div>
       <p className="text-slate-400">

@@ -77,7 +77,7 @@ export default function Login({guestRequestCreateAccount}: {guestRequestCreateAc
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 relative">
+    <div className="min-h-full min-w-full  flex items-center justify-center bg-slate-900 relative">
       <button
         onClick={() => router.back()}
         className="fixed left-6 top-20 flex items-center gap-2 bg-slate-800/90 border border-slate-700 text-teal-400 hover:bg-slate-700 hover:text-white font-bold text-base px-5 py-2 rounded-full shadow-lg transition-all duration-200 z-50 backdrop-blur cursor-pointer"

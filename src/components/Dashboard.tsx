@@ -605,7 +605,7 @@ const Dashboard = () => {
   }, [userData]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
+    <div className="min-h-full bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
       {/* Barra superior: izquierda para invitado, derecha para usuario */}
       <div className="flex justify-between items-center w-full mb-2">
         {(!userData.email || isGuest) && (
@@ -746,7 +746,7 @@ const Dashboard = () => {
                 )}
                 <div className="flex gap-2 w-full mt-2">
                   <button
-                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded"
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded cursor-pointer"
                     onClick={() => {
                       const horas = parseInt(horasInput, 10);
                       if (isNaN(horas) || horas < 0) {
@@ -762,7 +762,7 @@ const Dashboard = () => {
                     Guardar
                   </button>
                   <button
-                    className="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 rounded"
+                    className="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 rounded cursor-pointer"
                     onClick={() => setShowHorasModal(false)}
                   >
                     Cancelar
@@ -948,7 +948,7 @@ const Dashboard = () => {
 
       <button
         onClick={() => setShowReinforcement(true)}
-        className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2"
+        className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center mt-2 cursor-pointer"
       >
         {ICONS.shield}{" "}
         <span className="ml-2">
