@@ -7,7 +7,6 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { MdOutlineVisibility } from "react-icons/md";
 import { useUserStore } from "../store/userStore";
-import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
 
 // --- ElevenLabs & Web Speech API Implementation ---
@@ -602,50 +601,20 @@ const Dashboard = () => {
       {/* Barra superior: izquierda para invitado, derecha para usuario */}
       <div className="flex justify-between items-center w-full mb-2">
         {(!userData.email || isGuest) && (
-          <div className="flex gap-2 flex-col items-end">
-            <button
-              onClick={async () => {
-                await auth.signOut();
-                router.push("/");
-              }}
-              className="px-3 py-1 cursor-pointer rounded bg-slate-700 hover:bg-red-500 text-xs text-slate-200 hover:text-white font-bold transition-colors border border-slate-600 hover:border-red-600 shadow-sm w-fit"
-              title="Cerrar sesión"
-            >
-              Cerrar sesión
-            </button>
-            <div className="flex items-center gap-2 bg-yellow-400/20 border border-yellow-400 rounded px-3 py-1 text-yellow-300 font-semibold text-xs shadow-sm animate-pulse">
-              <span className="hidden sm:inline">⚠️</span>
-              <span>
-                Estás usando el modo invitado.{" "}
-                <span className="font-bold text-yellow-200">
-                  ¡Crea una cuenta gratis
-                </span>{" "}
-                para guardar tu progreso y no perder tus datos si cambias de
-                dispositivo!
-              </span>
-              <button
-                className="px-2 py-1 rounded bg-yellow-400 hover:bg-yellow-500 text-xs text-yellow-900 font-bold transition-colors shadow cursor-pointer"
-                onClick={() => router.push("/login")}
-              >
-                Crear cuenta
-              </button>
-            </div>
-          </div>
-        )}
-        {userData.email && !isGuest && (
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="font-semibold text-teal-300 text-sm">
-              {userData.email}
+          <div className="flex items-center gap-2 bg-yellow-400/20 border border-yellow-400 rounded px-3 py-1 text-yellow-300 font-semibold text-xs shadow-sm animate-pulse">
+            <span className="hidden sm:inline">⚠️</span>
+            <span>
+              Estás usando el modo invitado.{' '}
+              <span className="font-bold text-yellow-200">
+                ¡Crea una cuenta gratis
+              </span>{' '}
+              para guardar tu progreso y no perder tus datos si cambias de dispositivo!
             </span>
             <button
-              onClick={async () => {
-                await auth.signOut();
-                router.push("/");
-              }}
-              className="ml-2 px-3 py-1 cursor-pointer rounded bg-slate-700 hover:bg-red-500 text-xs text-slate-200 hover:text-white font-bold transition-colors border border-slate-600 hover:border-red-600 shadow-sm"
-              title="Cerrar sesión"
+              className="px-2 py-1 rounded bg-yellow-400 hover:bg-yellow-500 text-xs text-yellow-900 font-bold transition-colors shadow cursor-pointer"
+              onClick={() => router.push("/login")}
             >
-              Cerrar sesión
+              Crear cuenta
             </button>
           </div>
         )}

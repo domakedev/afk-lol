@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import React, { useState } from "react";
 import Link from "next/link";
@@ -92,37 +92,18 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-          <Link
-            href="/login"
-            onMouseEnter={() => setHovered("login")}
-            onMouseLeave={() => setHovered(null)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-400 hover:to-teal-500 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-400/50 cursor-pointer ${
-              hovered === "login" ? "scale-105 shadow-2xl" : ""
-            }`}
-          >
-            <span className="text-2xl">🔑</span> Iniciar sesión
-          </Link>
-          <Link
-            href="/login?mode=register"
-            onMouseEnter={() => setHovered("register")}
-            onMouseLeave={() => setHovered(null)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-white/90 text-teal-700 font-bold py-3 px-8 rounded-lg border-2 border-teal-400 hover:bg-teal-50 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-teal-200 focus:outline-none focus:ring-4 focus:ring-teal-200/50 cursor-pointer ${
-              hovered === "register" ? "scale-105 shadow-2xl" : ""
-            }`}
-          >
-            <span className="text-2xl">📝</span> Registrarse
-          </Link>
           <button
             type="button"
             onClick={handleGuestLogin}
             onMouseEnter={() => setHovered("guest")}
             onMouseLeave={() => setHovered(null)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-700 text-white font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-800 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-100 text-slate-500 font-bold py-3 px-8 rounded-lg border-2 border-slate-500 hover:bg-slate-200 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg ring-2 ring-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-400/50 cursor-pointer ${
               hovered === "guest" ? "scale-105 shadow-2xl" : ""
             } ${loading ? "opacity-60 cursor-wait" : ""}`}
             disabled={loading}
           >
-            <span className="text-2xl">👤</span> {loading ? "Entrando..." : "Continuar como invitado"}
+            <span className="text-2xl">🎮</span>{" "}
+            {loading ? "Entrando..." : "Continuar como invitado"}
           </button>
         </div>
         <footer className="mt-8 text-xs text-slate-500 text-center">

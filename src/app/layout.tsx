@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import { isUserAuthenticated } from "@/firebaseUserData";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://afk-lol.vercel.app/"),
@@ -74,7 +75,8 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-slate-900 text-white min-h-screen font-sans">
-        <main className="min-h-screen flex flex-col">{children}</main>
+        <Navbar />
+        <main className="min-h-screen flex flex-col pt-28">{children}</main>
       </body>
     </html>
   );
