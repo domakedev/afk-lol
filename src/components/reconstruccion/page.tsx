@@ -75,6 +75,13 @@ const Reconstruction: React.FC = () => {
     setRoutineTime("");
   };
 
+  // Eliminar rutina por id
+  const removeRoutine = (id: string) => {
+    updateUserData({
+      routines: userData.routines.filter((r) => r.id !== id),
+    });
+  };
+
   // Persistencia automática en Firebase
   React.useEffect(() => {
     if (userData) {
@@ -87,6 +94,15 @@ const Reconstruction: React.FC = () => {
       case "routines":
         return (
           <div>
+            <div className="flex items-center mb-2 justify-end">
+              <button
+                onClick={() => setActiveView("menu")}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
+              >
+                <span className="text-lg">←</span>
+                Volver
+              </button>
+            </div>
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Constructor de Rutinas
             </h3>
@@ -119,7 +135,7 @@ const Reconstruction: React.FC = () => {
                 >
                   <span className="font-mono text-teal-400">{r.time}</span>
                   <span className="text-slate-200">{r.text}</span>
-                  <button className="text-slate-500 hover:text-red-500">
+                  <button className="text-slate-500 hover:text-red-500" onClick={() => removeRoutine(r.id)}>
                     {ICONS.close}
                   </button>
                 </div>
@@ -130,6 +146,15 @@ const Reconstruction: React.FC = () => {
       case "goals":
         return (
           <div>
+            <div className="flex items-center mb-2 justify-end">
+              <button
+                onClick={() => setActiveView("menu")}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
+              >
+                <span className="text-lg">←</span>
+                Volver
+              </button>
+            </div>
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Establecimiento de Metas (SMART)
             </h3>
@@ -202,6 +227,15 @@ const Reconstruction: React.FC = () => {
       case "hobbies":
         return (
           <div>
+            <div className="flex items-center mb-2 justify-end">
+              <button
+                onClick={() => setActiveView("menu")}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-teal-500 bg-slate-900 text-teal-300 font-semibold shadow hover:bg-teal-500 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 cursor-pointer"
+              >
+                <span className="text-lg">←</span>
+                Volver
+              </button>
+            </div>
             <h3 className="text-xl font-semibold mb-4 text-teal-400">
               Explorador de Hobbies
             </h3>
@@ -231,7 +265,7 @@ const Reconstruction: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={() => setActiveView("routines")}
-              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition"
+              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition cursor-pointer"
             >
               <h3 className="font-semibold text-lg text-teal-400">
                 Constructor de Rutinas
@@ -242,7 +276,7 @@ const Reconstruction: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveView("goals")}
-              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition"
+              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition cursor-pointer"
             >
               <h3 className="font-semibold text-lg text-teal-400">
                 Establecimiento de Metas
@@ -253,7 +287,7 @@ const Reconstruction: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveView("hobbies")}
-              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition"
+              className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition cursor-pointer"
             >
               <h3 className="font-semibold text-lg text-teal-400">
                 Explorador de Hobbies

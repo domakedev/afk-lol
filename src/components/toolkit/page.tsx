@@ -257,7 +257,7 @@ const Toolkit: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => setActiveTool("trigger")}
-                className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition"
+                className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition cursor-pointer"
               >
                 <h3 className="font-semibold text-lg text-teal-400">
                   Registro de Desencadenantes
@@ -268,7 +268,7 @@ const Toolkit: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTool("cbt")}
-                className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition"
+                className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition cursor-pointer"
               >
                 <h3 className="font-semibold text-lg text-teal-400">
                   Desafío del Pensamiento
@@ -277,12 +277,19 @@ const Toolkit: React.FC = () => {
                   Cuestiona y cambia los pensamientos que no te ayudan.
                 </p>
               </button>
-              <button className="bg-slate-800 p-6 rounded-lg text-left hover:bg-slate-700 transition">
-                <h3 className="font-semibold text-lg text-teal-400">
+              <button
+                className="bg-slate-800 p-6 rounded-lg text-left opacity-50 cursor-not-allowed relative group"
+                disabled
+                aria-disabled="true"
+              >
+                <h3 className="font-semibold text-lg text-teal-400 flex items-center gap-2">
                   Guía de Solución de Problemas
+                  <span className="ml-2 bg-teal-600 text-white text-xs font-bold px-2 py-1 rounded-full group-hover:animate-none">
+                    Próximamente
+                  </span>
                 </h3>
                 <p className="text-slate-400 text-sm">
-                  Enfrenta desafíos de la vida real (próximamente).
+                  Enfrenta desafíos de la vida real.
                 </p>
               </button>
             </div>
@@ -309,7 +316,7 @@ const Toolkit: React.FC = () => {
                 return (
                   <li
                     key={trigger.id}
-                    className="bg-slate-700/80 rounded-xl p-4 text-slate-100 shadow-md border-l-4 border-teal-500 hover:scale-[1.02] transition-transform"
+                    className="bg-slate-700/80 rounded-xl p-4 text-slate-100 shadow-md border-l-4 border-teal-500 transition-transform"
                   >
                     <div className="flex gap-2 mb-2">
                       <span className="bg-teal-700/80 text-xs px-2 py-1 rounded-full font-semibold text-teal-100">
@@ -362,7 +369,7 @@ const Toolkit: React.FC = () => {
                 return (
                   <li
                     key={entry.id}
-                    className="bg-slate-700/80 rounded-xl p-4 text-slate-100 shadow-md border-l-4 border-teal-500 hover:scale-[1.02] transition-transform"
+                    className="bg-slate-700/80 rounded-xl p-4 text-slate-100 shadow-md border-l-4 border-teal-500 transition-transform"
                   >
                     <div className="flex gap-2 mb-2">
                       <span className="bg-teal-700/80 text-xs px-2 py-1 rounded-full font-semibold text-teal-100">
