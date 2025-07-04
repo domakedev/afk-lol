@@ -151,6 +151,7 @@ export default function Login({guestRequestCreateAccount}: {guestRequestCreateAc
               {error}
             </div>
           )}
+          {!guestRequestCreateAccount && (
           <button
             type="submit"
             className="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 shadow-md mt-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
@@ -158,6 +159,7 @@ export default function Login({guestRequestCreateAccount}: {guestRequestCreateAc
           >
             <span>{isSubmittingLogin ? "Entrando..." : "Iniciar sesión"}</span>
           </button>
+          )}
           <div className="flex flex-col gap-2 mt-2">
             <button
               type="button"
