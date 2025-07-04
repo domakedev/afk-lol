@@ -92,14 +92,13 @@ export default function Navbar() {
             href="/login"
             className="px-3 py-2 rounded-lg font-bold text-white bg-teal-500 hover:bg-teal-600 transition-all duration-150 shadow-md flex items-center gap-2 text-xs sm:text-base"
           >
-            <FaSignInAlt />{" "}
-            <span className="hidden sm:inline">Iniciar sesión</span>
+            <FaSignInAlt /> Iniciar sesión
           </Link>
           <Link
             href="/login"
             className="px-3 py-2 rounded-lg font-bold text-teal-700 bg-white hover:bg-teal-50 border-2 border-teal-400 transition-all duration-150 shadow-md flex items-center gap-2 text-xs sm:text-base"
           >
-            <FaUserPlus /> <span className="hidden sm:inline">Registrarse</span>
+            <FaUserPlus /> Registrarse
           </Link>
         </div>
       </nav>
@@ -271,7 +270,9 @@ export default function Navbar() {
             </Link>
             <div className="mt-6 flex flex-col gap-2 border-t border-slate-600 pt-4">
               <span className="font-semibold text-teal-300 flex items-center gap-1">
-                <span className="hidden [@media(min-width:1140px)]:inline">{userData?.email || (isGuest && "Invitado")}</span>
+                <span className="hidden [@media(min-width:1140px)]:inline">
+                  {userData?.email || (isGuest && "Invitado")}
+                </span>
               </span>
               <button
                 onClick={async () => {
