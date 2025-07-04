@@ -816,7 +816,7 @@ const Dashboard = () => {
             return (
               <span
                 key={key}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md cursor-cell
                   ${
                     unlocked
                       ? "animate-gradient-move border-transparent text-white"
