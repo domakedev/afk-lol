@@ -11,19 +11,24 @@ import {
   FaBookOpen,
   FaSignInAlt,
   FaUserPlus,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
+import { useState } from "react";
 
 export default function Navbar() {
   const userData = useUserStore((state) => state.userData);
   const isGuest = useUserStore((state) => state.isGuest);
   const router = useRouter();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Mostrar solo el logo como Home si no hay usuario ni invitado
   if (!userData && !isGuest) {
     return (
-      <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center justify-between px-4 py-2 shadow-lg backdrop-blur fixed top-0 left-0">
+      <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center justify-between px-4 py-2 shadow-lg backdrop-blur sticky top-0 left-0">
         <div className="flex gap-2 items-center">
+          {/* Logo Home */}
           <Link
             href="/"
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-colors ${
@@ -40,7 +45,7 @@ export default function Navbar() {
               height={28}
             />
             <span
-              className="font-extrabold tracking-tight text-lg"
+              className="font-extrabold tracking-tight text-lg hidden sm:inline"
               style={{ fontFamily: "Russo One, sans-serif" }}
             >
               AFK LOL
@@ -50,15 +55,16 @@ export default function Navbar() {
         <div className="flex gap-2 items-center ml-auto">
           <Link
             href="/login"
-            className="px-4 py-2 rounded-lg font-bold text-white bg-teal-500 hover:bg-teal-600 transition-all duration-150 shadow-md flex items-center gap-2"
+            className="px-3 py-2 rounded-lg font-bold text-white bg-teal-500 hover:bg-teal-600 transition-all duration-150 shadow-md flex items-center gap-2 text-xs sm:text-base"
           >
-            <FaSignInAlt /> Iniciar sesión
+            <FaSignInAlt />{" "}
+            <span className="hidden sm:inline">Iniciar sesión</span>
           </Link>
           <Link
-            href="/login?mode=register"
-            className="px-4 py-2 rounded-lg font-bold text-teal-700 bg-white hover:bg-teal-50 border-2 border-teal-400 transition-all duration-150 shadow-md flex items-center gap-2"
+            href="/login"
+            className="px-3 py-2 rounded-lg font-bold text-teal-700 bg-white hover:bg-teal-50 border-2 border-teal-400 transition-all duration-150 shadow-md flex items-center gap-2 text-xs sm:text-base"
           >
-            <FaUserPlus /> Registrarse
+            <FaUserPlus /> <span className="hidden sm:inline">Registrarse</span>
           </Link>
         </div>
       </nav>
@@ -68,9 +74,11 @@ export default function Navbar() {
   // Solo mostrar si hay usuario o invitado
   if (!userData && !isGuest) return null;
 
+  // Responsive: menú hamburguesa en móvil
   return (
-    <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center justify-between px-4 py-2 shadow-lg backdrop-blur fixed top-0 left-0">
-      <div className="flex gap-2 items-center">
+    <nav className="w-full bg-slate-800/90 border-b border-slate-700 z-40 flex items-center px-4 py-2 shadow-lg backdrop-blur sticky top-0 left-0">
+      {/* Izquierda: logo + enlaces */}
+      <div className="flex items-center gap-2 flex-1 min-w-0">
         <Link
           href="/"
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-colors ${
@@ -87,55 +95,68 @@ export default function Navbar() {
             height={28}
           />
           <span
-            className="font-extrabold tracking-tight text-lg"
+            className="font-extrabold tracking-tight text-lg  lg:inline"
             style={{ fontFamily: "Russo One, sans-serif" }}
           >
             AFK LOL
           </span>
         </Link>
-        <Link
-          href="/dashboard"
-          className={`px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-all duration-150 flex items-center gap-2 ${
-            pathname === "/dashboard"
-              ? "bg-teal-700/80 text-white shadow-md scale-105"
-              : ""
-          }`}
-        >
-          <FaTachometerAlt /> Dashboard
-        </Link>
-        <Link
-          href="/toolkit"
-          className={`px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-indigo-600 hover:text-white transition-all duration-150 flex items-center gap-2 ${
-            pathname === "/toolkit"
-              ? "bg-indigo-700/80 text-white shadow-md scale-105"
-              : ""
-          }`}
-        >
-          <FaToolbox /> Herramientas
-        </Link>
-        <Link
-          href="/reconstruccion"
-          className={`px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-amber-600 hover:text-white transition-all duration-150 flex items-center gap-2 ${
-            pathname === "/reconstruccion"
-              ? "bg-amber-700/80 text-white shadow-md scale-105"
-              : ""
-          }`}
-        >
-          <FaBrain /> Reconstrucción
-        </Link>
-        <Link
-          href="/educacion"
-          className={`px-4 py-2 rounded-lg font-bold text-slate-200 hover:bg-pink-600 hover:text-white transition-all duration-150 flex items-center gap-2 ${
-            pathname === "/educacion"
-              ? "bg-pink-700/80 text-white shadow-md scale-105"
-              : ""
-          }`}
-        >
-          <FaBookOpen /> Educación
-        </Link>
+        {/* Enlaces principales: ocultos en móvil, visibles en md+ */}
+        <div className="hidden md:flex gap-3 items-center">
+          <Link
+            href="/dashboard"
+            className={`px-3 py-2 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-all duration-150 flex items-center gap-2 text-sm ${
+              pathname === "/dashboard"
+                ? "bg-teal-700/80 text-white shadow-md scale-105"
+                : ""
+            }`}
+          >
+            <FaTachometerAlt />{" "}
+            <span className="hidden sm:inline">Dashboard</span>
+          </Link>
+          <Link
+            href="/toolkit"
+            className={`px-3 py-2 rounded-lg font-bold text-slate-200 hover:bg-indigo-600 hover:text-white transition-all duration-150 flex items-center gap-2 text-sm ${
+              pathname === "/toolkit"
+                ? "bg-indigo-700/80 text-white shadow-md scale-105"
+                : ""
+            }`}
+          >
+            <FaToolbox /> <span className="hidden sm:inline">Herramientas</span>
+          </Link>
+          <Link
+            href="/reconstruccion"
+            className={`px-3 py-2 rounded-lg font-bold text-slate-200 hover:bg-amber-600 hover:text-white transition-all duration-150 flex items-center gap-2 text-sm ${
+              pathname === "/reconstruccion"
+                ? "bg-amber-700/80 text-white shadow-md scale-105"
+                : ""
+            }`}
+          >
+            <FaBrain /> <span className="hidden sm:inline">Reconstrucción</span>
+          </Link>
+          <Link
+            href="/educacion"
+            className={`px-3 py-2 rounded-lg font-bold text-slate-200 hover:bg-pink-600 hover:text-white transition-all duration-150 flex items-center gap-2 text-sm ${
+              pathname === "/educacion"
+                ? "bg-pink-700/80 text-white shadow-md scale-105"
+                : ""
+            }`}
+          >
+            <FaBookOpen /> <span className="hidden sm:inline">Educación</span>
+          </Link>
+        </div>
       </div>
-      <div className="flex items-center gap-3 ml-auto bg-slate-700/60 px-4 py-1 rounded-full shadow border border-slate-600">
-        <span className="font-semibold text-teal-300 text-sm flex items-center gap-1">
+      {/* Botón hamburguesa solo en móvil, alineado a la derecha */}
+      <button
+        className="ml-2 flex md:hidden p-2 rounded hover:bg-slate-700 transition-colors"
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+      >
+        {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+      </button>
+      {/* Controles de usuario: solo visibles en desktop, alineados a la derecha */}
+      <div className="hidden md:flex items-center gap-3 bg-slate-700/60 px-3 py-1 rounded-full shadow border border-slate-600 text-xs xs:text-sm ml-4">
+        <span className="font-semibold text-teal-300 flex items-center gap-1">
           {userData?.email || (isGuest && "Invitado")}
         </span>
         <button
@@ -143,12 +164,100 @@ export default function Navbar() {
             await auth.signOut();
             router.push("/");
           }}
-          className="px-3 py-1 cursor-pointer rounded bg-red-600 text-xs text-white font-bold transition-all duration-150 border border-slate-600 shadow-sm"
+          className="px-2 py-1 cursor-pointer rounded bg-red-600 text-xs text-white font-bold transition-all duration-150 hover:bg-red-700 hover:transform hover:scale-105"
           title="Cerrar sesión"
         >
-          Cerrar sesión
+          <span className="hidden lg:inline">Cerrar sesión</span>
+          <span className="inline lg:hidden">
+            <FaSignInAlt />
+          </span>
         </button>
       </div>
+      {/* Menú móvil: visible solo si menuOpen y en pantallas pequeñas */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex"
+          style={{ top: 0, left: 0, width: "100vw", height: "100vh" }}
+          onClick={() => setMenuOpen(false)}
+        >
+          <aside
+            className="relative h-full w-4/5 max-w-xs bg-slate-900 shadow-2xl flex flex-col gap-2 p-6 animate-slide-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-3 text-slate-400 hover:text-white text-2xl"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Cerrar menú"
+            >
+              <FaTimes />
+            </button>
+            <Link
+              href="/dashboard"
+              className={`px-3 py-3 rounded-lg font-bold text-slate-200 hover:bg-teal-600 hover:text-white transition-all duration-150 flex items-center gap-3 text-base ${
+                pathname === "/dashboard"
+                  ? "bg-teal-700/80 text-white shadow-md scale-105"
+                  : ""
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaTachometerAlt /> Dashboard
+            </Link>
+            <Link
+              href="/toolkit"
+              className={`px-3 py-3 rounded-lg font-bold text-slate-200 hover:bg-indigo-600 hover:text-white transition-all duration-150 flex items-center gap-3 text-base ${
+                pathname === "/toolkit"
+                  ? "bg-indigo-700/80 text-white shadow-md scale-105"
+                  : ""
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaToolbox /> Herramientas
+            </Link>
+            <Link
+              href="/reconstruccion"
+              className={`px-3 py-3 rounded-lg font-bold text-slate-200 hover:bg-amber-600 hover:text-white transition-all duration-150 flex items-center gap-3 text-base ${
+                pathname === "/reconstruccion"
+                  ? "bg-amber-700/80 text-white shadow-md scale-105"
+                  : ""
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaBrain /> Reconstrucción
+            </Link>
+            <Link
+              href="/educacion"
+              className={`px-3 py-3 rounded-lg font-bold text-slate-200 hover:bg-pink-600 hover:text-white transition-all duration-150 flex items-center gap-3 text-base ${
+                pathname === "/educacion"
+                  ? "bg-pink-700/80 text-white shadow-md scale-105"
+                  : ""
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaBookOpen /> Educación
+            </Link>
+            <div className="mt-6 flex flex-col gap-2 border-t border-slate-600 pt-4">
+              <span className="font-semibold text-teal-300 flex items-center gap-1">
+                {userData?.email || (isGuest && "Invitado")}
+              </span>
+              <button
+                onClick={async () => {
+                  setMenuOpen(false);
+                  await auth.signOut();
+                  router.push("/");
+                }}
+                className="px-3 py-2 cursor-pointer rounded bg-red-600 text-white font-bold transition-all duration-150 flex items-center gap-2 hover:bg-red-700 hover:transform hover:scale-105"
+                title="Cerrar sesión"
+              >
+                <FaSignInAlt /> Cerrar sesión
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </nav>
   );
 }
+
+// Animación para el menú móvil (puedes añadir esto a tu CSS global o tailwind.config.js)
+// .animate-slide-in { animation: slideIn 0.2s cubic-bezier(0.4,0,0.2,1) both; }
+// @keyframes slideIn { from { transform: translateX(-100%); opacity: 0.5; } to { transform: translateX(0); opacity: 1; } }

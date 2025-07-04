@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import Link from "next/link";
 import { signInAnonymously } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useUserStore } from "../store/userStore";

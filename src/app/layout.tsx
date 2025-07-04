@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import { isUserAuthenticated } from "@/firebaseUserData";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
@@ -64,8 +63,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const asd = isUserAuthenticated();
-  console.log("🚀 ~ asdeeeeeeeeeeee:", asd);
   return (
     <html lang="es">
       <head>
@@ -76,7 +73,7 @@ export default function RootLayout({
       </head>
       <body className="bg-slate-900 text-white min-h-screen font-sans">
         <Navbar />
-        <main className="min-h-screen flex flex-col pt-28">{children}</main>
+        <main className="min-h-screen flex flex-col">{children}</main>
       </body>
     </html>
   );
