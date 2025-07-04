@@ -190,19 +190,18 @@ export default function Navbar() {
         {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
       </button>
       {/* Controles de usuario: solo visibles en desktop, alineados a la derecha */}
-      <div className="hidden md:flex items-center gap-3 bg-slate-700/60 px-3 py-1 rounded-full shadow border border-slate-600 text-xs xs:text-sm ml-4">
-        <span className="font-semibold text-teal-300 flex items-center gap-1">
+      <div className="hidden md:flex items-center gap-4 bg-gradient-to-r from-teal-800/80 to-slate-800/80 px-4 py-1 rounded-full shadow-lg border border-teal-500/40 text-sm ml-4 transition-all duration-200">
+        <span className="font-semibold text-teal-200 flex items-center gap-2 px-2">
+          <FaUserPlus className="text-teal-400 text-lg" />
           {userData?.email || "Invitado"}
         </span>
         <button
           onClick={handleSignOut}
-          className="px-2 py-1 cursor-pointer rounded bg-red-600 text-xs text-white font-bold transition-all duration-150 hover:bg-red-700 hover:transform hover:scale-105"
+          className="flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-pink-600 hover:to-red-700 text-white font-bold shadow-md border border-red-400/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2"
           title="Cerrar sesión"
         >
+          <FaSignInAlt className="text-base" />
           <span className="hidden lg:inline">Cerrar sesión</span>
-          <span className="inline lg:hidden">
-            <FaSignInAlt />
-          </span>
         </button>
       </div>
       {/* Menú móvil: visible solo si menuOpen y en pantallas pequeñas */}
