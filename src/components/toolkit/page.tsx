@@ -3,10 +3,22 @@ import React, { useState, useEffect } from "react";
 import { TriggerEntry, CbtEntry } from "@/types";
 import { ICONS } from "@/constants";
 import { useUserStore } from "../../store/userStore";
+import type { UserData } from "@/types";
 
 const Toolkit: React.FC = () => {
-  const userData = useUserStore((state) => state.userData)!;
+  // Forzamos el tipado de userData como UserData | undefined
+  const userData = useUserStore((state) => state.userData) as
+    | UserData
+    | undefined;
   const updateUserData = useUserStore((state) => state.updateUserData);
+
+  // Garantiza que triggers y cbtEntries sean arrays aunque no existan en userData
+  const triggers: TriggerEntry[] = Array.isArray(userData?.triggers)
+    ? userData!.triggers
+    : [];
+  const cbtEntries: CbtEntry[] = Array.isArray(userData?.cbtEntries)
+    ? userData!.cbtEntries
+    : [];
 
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [showSOS, setShowSOS] = useState(false);
@@ -41,7 +53,7 @@ const Toolkit: React.FC = () => {
       feeling: triggerFeeling,
       action: triggerAction,
     };
-    updateUserData({ triggers: [newTrigger, ...userData.triggers] });
+    updateUserData({ triggers: [newTrigger, ...triggers] });
     setTriggerSituation("");
     setTriggerThought("");
     setTriggerFeeling("");
@@ -61,7 +73,7 @@ const Toolkit: React.FC = () => {
       alternativeThought: cbtAltThought,
       outcome: cbtOutcome,
     };
-    updateUserData({ cbtEntries: [newEntry, ...userData.cbtEntries] });
+    updateUserData({ cbtEntries: [newEntry, ...cbtEntries] });
     // Reset fields
     setCbtSituation("");
     setCbtAutoThought("");
@@ -289,9 +301,9 @@ const Toolkit: React.FC = () => {
           <h3 className="text-xl font-bold text-teal-400 mb-4 flex items-center gap-2">
             ⚡ Desencadenantes recientes
           </h3>
-          {userData.triggers && userData.triggers.length > 0 ? (
+          {triggers.length > 0 ? (
             <ul className="space-y-4">
-              {userData.triggers.slice(0, 3).map((trigger) => {
+              {triggers.slice(0, 3).map((trigger: TriggerEntry) => {
                 const [fecha, hora] = trigger.date.split(",");
                 return (
                   <li
@@ -342,9 +354,9 @@ const Toolkit: React.FC = () => {
           <h3 className="text-xl font-bold text-teal-400 mb-4 flex items-center gap-2">
             📖 Diario de Reestructuración Cognitiva (CBT)
           </h3>
-          {userData.cbtEntries && userData.cbtEntries.length > 0 ? (
+          {cbtEntries.length > 0 ? (
             <ul className="space-y-4">
-              {userData.cbtEntries.slice(0, 3).map((entry) => {
+              {cbtEntries.slice(0, 3).map((entry: CbtEntry) => {
                 const [fecha, hora] = entry.date.split(",");
                 return (
                   <li
