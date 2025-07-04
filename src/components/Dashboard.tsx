@@ -8,6 +8,7 @@ import { useWindowSize } from "react-use";
 import { MdOutlineVisibility } from "react-icons/md";
 import { useUserStore } from "../store/userStore";
 import { useRouter } from "next/navigation";
+import { saveUserData } from "../firebaseUserData";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -595,6 +596,12 @@ const Dashboard = () => {
     setLostMinutes("");
     setDefeatFeeling("");
   };
+
+  // Sincroniza automáticamente los cambios de userData en Firebase (incluye invitados)
+  useEffect(() => {
+    if (!userData) return;
+    saveUserData(userData);
+  }, [userData]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
