@@ -9,6 +9,7 @@ import { MdOutlineVisibility } from "react-icons/md";
 import { useUserStore } from "../store/userStore";
 import { useRouter } from "next/navigation";
 import { saveUserData } from "../firebaseUserData";
+import { motion } from "framer-motion";
 
 // --- ElevenLabs & Web Speech API Implementation ---
 
@@ -275,7 +276,7 @@ const Dashboard = () => {
   const userData = useUserStore(
     (state) => state.userData
   ) as UserDataWithStreak;
-  console.log("🚀 ~ Dashboard ~ userData:", userData.killStreak)
+  console.log("🚀 ~ Dashboard ~ userData:", userData.killStreak);
   const isGuest = useUserStore((state) => state.isGuest);
   const updateUserData = useUserStore((state) => state.updateUserData);
   const [activity, setActivity] = useState("");
@@ -604,6 +605,27 @@ const Dashboard = () => {
     saveUserData(userData);
   }, [userData]);
 
+  const [brokenPill, setBrokenPill] = useState<string | null>(null);
+  const pieces = Array.from({ length: 12 });
+
+  // Efecto automático al desbloquear un nuevo pill
+  const [lastKillStreak, setLastKillStreak] = useState(userData.killStreak);
+  useEffect(() => {
+    if (userData.killStreak > lastKillStreak) {
+      const newKey = userData.killStreak;
+      if (newKey >= 0 && newKey <= 8) {
+        setBrokenPill(String(newKey));
+        // Reproducir sonido de victoria a medio volumen al desbloquear logro
+        const audio = new Audio("/celebration/pill-click.mp3");
+        audio.volume = 0.5;
+        audio.play().catch(() => {});
+        setTimeout(() => setBrokenPill(null), 900);
+      }
+    }
+    setLastKillStreak(userData.killStreak);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData.killStreak]);
+
   return (
     <div className="min-h-full bg-slate-900 text-slate-200 flex flex-col p-4 space-y-6 max-w-4xl mx-auto">
       {/* Barra superior: izquierda para invitado, derecha para usuario */}
@@ -612,11 +634,12 @@ const Dashboard = () => {
           <div className="flex items-center gap-2 bg-yellow-400/20 border border-yellow-400 rounded px-3 py-1 text-yellow-300 font-semibold text-xs shadow-sm animate-pulse">
             <span className="hidden sm:inline">⚠️</span>
             <span>
-              Estás usando el modo invitado.{' '}
+              Estás usando el modo invitado.{" "}
               <span className="font-bold text-yellow-200">
                 ¡Crea una cuenta gratis
-              </span>{' '}
-              para guardar tu progreso y no perder tus datos si cambias de dispositivo!
+              </span>{" "}
+              para guardar tu progreso y no perder tus datos si cambias de
+              dispositivo!
             </span>
             <button
               className="px-2 py-1 rounded bg-yellow-400 hover:bg-yellow-500 text-xs text-yellow-900 font-bold transition-colors shadow cursor-pointer"
@@ -778,7 +801,81 @@ const Dashboard = () => {
         <div className="mb-2 text-base text-amber-300 font-bold">
           Reclama victorias para desbloquear logros cada día
         </div>
-        <div className="flex flex-wrap justify-center gap-2 mt-2">
+        <div
+          className="flex flex-wrap justify-center gap-2 mt-2 relative"
+          style={{ zIndex: 0 }}
+        >
+          {/* Portal para piezas animadas fuera del pill */}
+          {brokenPill &&
+            (() => {
+              const key = brokenPill;
+              const gradients = [
+                "linear-gradient(270deg,#14b8a6,#06b6d4,#6366f1,#14b8a6)",
+                "linear-gradient(270deg,#ef4444,#f97316,#ea580c,#ef4444)",
+                "linear-gradient(270deg,#f59e0b,#b45309,#f59e0b,#b45309)",
+                "linear-gradient(270deg,#6366f1,#a21caf,#f472b6,#6366f1)",
+                "linear-gradient(270deg,#f97316,#ea580c,#be185d,#f97316)",
+                "linear-gradient(270deg,#f43f5e,#be185d,#7c3aed,#f43f5e)",
+                "linear-gradient(270deg,#22d3ee,#818cf8,#f472b6,#22d3ee)",
+                "linear-gradient(270deg,#22c55e,#0ea5e9,#6366f1,#22c55e)",
+                "linear-gradient(270deg,#6366f1,#14b8a6,#22d3ee,#f43f5e,#6366f1)",
+              ];
+              const shadows = [
+                "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #6366f160",
+                "0 2px 8px 0 #ef4444a0, 0 8px 32px 0 #f9731660",
+                "0 2px 8px 0 #b45309a0, 0 8px 32px 0 #f59e0b60",
+                "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #a21caf60",
+                "0 2px 8px 0 #be185da0, 0 8px 32px 0 #f9731660",
+                "0 2px 8px 0 #f43f5ea0, 0 8px 32px 0 #7c3aed60",
+                "0 2px 8px 0 #22d3eea0, 0 8px 32px 0 #818cf860",
+                "0 2px 8px 0 #22c55ea0, 0 8px 32px 0 #0ea5e960",
+                "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #f43f5e60",
+              ];
+              const pillBg = gradients[Number(key)];
+              const pillShadow = shadows[Number(key)];
+              // Encuentra el span del pill para posicionar el portal
+              const pillEl = document.querySelector(`[data-pill-key="${key}"]`);
+              if (!pillEl) return null;
+              const rect = pillEl.getBoundingClientRect();
+              const parentRect = pillEl.parentElement?.getBoundingClientRect();
+              const left = rect.left - (parentRect?.left || 0);
+              const top = rect.top - (parentRect?.top || 0);
+              return (
+                <div
+                  style={{
+                    position: "absolute",
+                    left,
+                    top,
+                    width: rect.width,
+                    height: rect.height,
+                    pointerEvents: "none",
+                    zIndex: 50,
+                  }}
+                >
+                  {pieces.map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-4 h-4 rounded-sm"
+                      initial={{ opacity: 1, x: 0, y: 0, rotate: 0 }}
+                      animate={{
+                        opacity: 0,
+                        x: (Math.random() - 0.5) * 180,
+                        y: (Math.random() - 0.5) * 180,
+                        rotate: Math.random() * 360,
+                      }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      style={{
+                        top: "40%",
+                        left: "40%",
+                        background: pillBg,
+                        boxShadow: pillShadow,
+                        zIndex: 10,
+                      }}
+                    />
+                  ))}
+                </div>
+              );
+            })()}
           {Object.entries({
             0: "Nuevo inicio",
             1: "Primera Sangre",
@@ -790,31 +887,28 @@ const Dashboard = () => {
             7: "Racha de Dios",
             8: "Legendario",
           }).map(([key, label]) => {
-            // Desbloqueo por racha actual (killStreak)
             const unlocked = userData.killStreak >= Number(key);
-            // Gradientes únicos por logro, amarillo oscuro para el primero
             const gradients = [
-              "linear-gradient(270deg,#14b8a6,#06b6d4,#6366f1,#14b8a6)", // 2: teal-azul
-              "linear-gradient(270deg,#ef4444,#f97316,#ea580c,#ef4444)", // 1: rojo-naranja
-              "linear-gradient(270deg,#f59e0b,#b45309,#f59e0b,#b45309)", // 0: amarillo oscuro
-              "linear-gradient(270deg,#6366f1,#a21caf,#f472b6,#6366f1)", // 3: violeta-rosa
-              "linear-gradient(270deg,#f97316,#ea580c,#be185d,#f97316)", // 4: naranja-rosa fuerte
-              "linear-gradient(270deg,#f43f5e,#be185d,#7c3aed,#f43f5e)", // 5: rojo-violeta
-              "linear-gradient(270deg,#22d3ee,#818cf8,#f472b6,#22d3ee)", // 6: cyan-violeta-rosa
-              "linear-gradient(270deg,#22c55e,#0ea5e9,#6366f1,#22c55e)", // 7: verde-azul-violeta
-              "linear-gradient(270deg,#6366f1,#14b8a6,#22d3ee,#f43f5e,#6366f1)", // 8: multicolor sin amarillo claro
+              "linear-gradient(270deg,#14b8a6,#06b6d4,#6366f1,#14b8a6)",
+              "linear-gradient(270deg,#ef4444,#f97316,#ea580c,#ef4444)",
+              "linear-gradient(270deg,#f59e0b,#b45309,#f59e0b,#b45309)",
+              "linear-gradient(270deg,#6366f1,#a21caf,#f472b6,#6366f1)",
+              "linear-gradient(270deg,#f97316,#ea580c,#be185d,#f97316)",
+              "linear-gradient(270deg,#f43f5e,#be185d,#7c3aed,#f43f5e)",
+              "linear-gradient(270deg,#22d3ee,#818cf8,#f472b6,#22d3ee)",
+              "linear-gradient(270deg,#22c55e,#0ea5e9,#6366f1,#22c55e)",
+              "linear-gradient(270deg,#6366f1,#14b8a6,#22d3ee,#f43f5e,#6366f1)",
             ];
-            // Shadows a juego con el fondo
             const shadows = [
-              "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #6366f160", // 2: teal-azul
-              "0 2px 8px 0 #ef4444a0, 0 8px 32px 0 #f9731660", // 1: rojo-naranja
-              "0 2px 8px 0 #b45309a0, 0 8px 32px 0 #f59e0b60", // 0: amarillo oscuro
-              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #a21caf60", // 3: violeta-rosa
-              "0 2px 8px 0 #be185da0, 0 8px 32px 0 #f9731660", // 4: naranja-rosa fuerte
-              "0 2px 8px 0 #f43f5ea0, 0 8px 32px 0 #7c3aed60", // 5: rojo-violeta
-              "0 2px 8px 0 #22d3eea0, 0 8px 32px 0 #818cf860", // 6: cyan-violeta
-              "0 2px 8px 0 #22c55ea0, 0 8px 32px 0 #0ea5e960", // 7: verde-azul
-              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #f43f5e60", // 8: multicolor
+              "0 2px 8px 0 #14b8a6a0, 0 8px 32px 0 #6366f160",
+              "0 2px 8px 0 #ef4444a0, 0 8px 32px 0 #f9731660",
+              "0 2px 8px 0 #b45309a0, 0 8px 32px 0 #f59e0b60",
+              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #a21caf60",
+              "0 2px 8px 0 #be185da0, 0 8px 32px 0 #f9731660",
+              "0 2px 8px 0 #f43f5ea0, 0 8px 32px 0 #7c3aed60",
+              "0 2px 8px 0 #22d3eea0, 0 8px 32px 0 #818cf860",
+              "0 2px 8px 0 #22c55ea0, 0 8px 32px 0 #0ea5e960",
+              "0 2px 8px 0 #6366f1a0, 0 8px 32px 0 #f43f5e60",
             ];
             const pillBg = unlocked
               ? gradients[Number(key)]
@@ -822,25 +916,68 @@ const Dashboard = () => {
             const pillShadow = unlocked
               ? shadows[Number(key)]
               : "0 2px 8px 0 #334155a0, 0 8px 32px 0 #1e293b60";
+            if (!unlocked) {
+              return (
+                <div
+                  key={key}
+                  style={{ display: "inline-block", cursor: "not-allowed" }}
+                >
+                  <span
+                    data-pill-key={key}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md animate-gradient-move border-transparent text-white`}
+                    style={{
+                      minWidth: 90,
+                      background: pillBg,
+                      backgroundSize: undefined,
+                      borderColor: "#64748b",
+                      boxShadow: pillShadow,
+                      position: "relative",
+                      display: "inline-block",
+                      overflow: "hidden",
+                      opacity: 0.6,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    <span
+                      className="relative z-20"
+                      style={{ color: "#cbd5e1" }}
+                    >
+                      {label}
+                    </span>
+                  </span>
+                </div>
+              );
+            }
             return (
               <span
                 key={key}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md cursor-cell
-                  ${
-                    unlocked
-                      ? "animate-gradient-move border-transparent text-white"
-                      : "border-slate-500 text-slate-300 opacity-60"
-                  }
-                `}
+                data-pill-key={key}
+                className={`px-4 py-3 rounded-full text-xs font-bold transition-all duration-200 select-none shadow-md animate-gradient-move border-transparent text-white`}
                 style={{
                   minWidth: 90,
                   background: pillBg,
-                  backgroundSize: unlocked ? "400% 400%" : undefined,
-                  borderColor: unlocked ? "transparent" : "#64748b",
+                  backgroundSize: "400% 400%",
+                  borderColor: "transparent",
                   boxShadow: pillShadow,
+                  position: "relative",
+                  display: "inline-block",
+                  overflow: "hidden",
+                  cursor: "cell",
+                  opacity: 1,
+                  pointerEvents: "auto",
+                }}
+                onClick={() => {
+                  setBrokenPill(key);
+                  setTimeout(() => setBrokenPill(null), 900);
+                  // Reproducir sonido de victoria a medio volumen
+                  const audio = new Audio("/celebration/pill-click.mp3");
+                  audio.volume = 0.5;
+                  audio.play().catch(() => {});
                 }}
               >
-                {label}
+                <span className="relative z-20" style={{ color: "#fff" }}>
+                  {label}
+                </span>
               </span>
             );
           })}
